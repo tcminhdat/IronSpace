@@ -1,0 +1,657 @@
+<!doctype html>
+<html lang="vi"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>IronSpace</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --steel:#2B3440; --steel-2:#3D4859; --spark:#D95A17; --spark-ink:#B3480F; --spark-bg:#FDF0E8;
+  --ink:#141A21; --ink-2:#44505E; --ink-3:#5F6B79;
+  --bg:#EDF0F3; --card:#FFFFFF; --soft:#F4F6F8; --line:#E1E6EB; --line-2:#C9D1D9;
+  --ok:#1E7A46; --ok-bg:#E8F3EC; --bad:#B3261E; --bad-bg:#FBEAE8; --warn:#B3480F; --warn-bg:#FDF0E8;
+  --sans:"Be Vietnam Pro",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,monospace;
+  --r:14px; --r-s:10px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{background:var(--bg);font-family:var(--sans);color:var(--ink);font-size:15px;line-height:1.5;
+  display:flex;flex-direction:column;align-items:center;padding:20px 16px 60px}
+button{font-family:inherit;cursor:pointer;border:0;background:none;color:inherit}
+input,select,textarea{font-family:inherit;font-size:16px;width:100%}
+
+/* ---------- khung ngoài ---------- */
+.top{width:100%;max-width:430px;margin-bottom:14px}
+.wm{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--ink-3);text-transform:uppercase;
+  display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}
+.who{display:flex;gap:6px;background:var(--card);padding:5px;border-radius:999px;box-shadow:0 1px 3px rgba(43,52,64,.10)}
+.who button{flex:1;padding:8px 4px;border-radius:999px;font-size:12.5px;font-weight:600;color:var(--ink-3);line-height:1.15}
+.who button small{display:block;font-size:10px;font-weight:500;opacity:.8}
+.who button[aria-current="true"]{background:var(--steel);color:#fff}
+
+/* ---------- điện thoại ---------- */
+.phone{width:100%;max-width:430px;background:var(--card);border-radius:28px;overflow:hidden;
+  box-shadow:0 12px 40px rgba(43,52,64,.20),0 2px 8px rgba(43,52,64,.10);display:flex;flex-direction:column;
+  height:min(860px,calc(100vh - 150px));min-height:620px}
+.bar{background:var(--steel);color:#fff;padding:13px 18px 14px;display:flex;align-items:center;gap:12px;flex:0 0 auto}
+.bar .lg{font-weight:700;font-size:17px;letter-spacing:-.01em}
+.bar .lg i{color:var(--spark);font-style:normal}
+.bar .sub{font-size:11.5px;color:#AEB9C6;margin-top:1px}
+.bar .bell{margin-left:auto;position:relative;width:34px;height:34px;border-radius:999px;background:#3D4859;
+  display:grid;place-items:center;font-size:15px}
+.bar .bell b{position:absolute;top:-3px;right:-3px;background:var(--spark);color:#fff;font-size:10px;
+  min-width:17px;height:17px;border-radius:999px;display:grid;place-items:center;font-weight:700;padding:0 4px}
+.scr{flex:1;overflow-y:auto;overflow-x:hidden;background:var(--bg);padding:14px 14px 20px;scrollbar-width:thin}
+.nav{flex:0 0 auto;display:flex;background:var(--card);border-top:1px solid var(--line);padding:6px 4px 10px}
+.nav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 2px;
+  font-size:11px;font-weight:600;color:var(--ink-3)}
+.nav button[aria-current="true"]{color:var(--spark-ink)}
+.nav .ic{width:22px;height:22px;display:block}
+.nav .dot{position:absolute;margin:-2px 0 0 13px;width:8px;height:8px;border-radius:999px;background:var(--spark);border:2px solid var(--card)}
+
+/* ---------- khối ---------- */
+.h1{font-size:21px;font-weight:700;letter-spacing:-.02em;margin:2px 0 2px}
+.h2{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);margin:20px 0 9px}
+.sub{font-size:13px;color:var(--ink-3);margin-bottom:12px}
+.c{background:var(--card);border-radius:var(--r);padding:15px;margin-bottom:11px;box-shadow:0 1px 3px rgba(43,52,64,.08)}
+.c.flat{box-shadow:none;background:var(--soft)}
+.c.dark{background:var(--steel);color:#fff}
+.c.dark .lbl{color:#AEB9C6}
+.row{display:flex;gap:10px}
+.row.sb{justify-content:space-between;align-items:center}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.lbl{font-size:11.5px;font-weight:600;color:var(--ink-3);letter-spacing:.03em}
+.big{font-family:var(--mono);font-size:27px;font-weight:600;letter-spacing:-.025em;line-height:1.1}
+.mid{font-family:var(--mono);font-size:19px;font-weight:600;letter-spacing:-.02em}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.muted{color:var(--ink-3)}
+.sm{font-size:12.5px}
+.xs{font-size:11.5px}
+
+/* ---------- nút ---------- */
+.b{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:15px 16px;border-radius:12px;
+  font-size:16px;font-weight:600;background:var(--steel);color:#fff;margin-top:4px}
+.b.sp{background:var(--spark-ink)}
+.b.gh{background:var(--card);color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--line-2)}
+.b.sm{padding:10px 14px;font-size:14px;border-radius:10px;width:auto}
+.b:active{transform:translateY(1px)}
+.b[disabled]{opacity:.45;pointer-events:none}
+
+/* ---------- dòng danh sách ---------- */
+.li{display:flex;align-items:center;gap:12px;width:100%;background:var(--card);border-radius:var(--r);
+  padding:14px 15px;margin-bottom:9px;text-align:left;box-shadow:0 1px 3px rgba(43,52,64,.08)}
+.li:active{background:var(--soft)}
+.li .av{flex:0 0 42px;height:42px;border-radius:999px;background:var(--soft);display:grid;place-items:center;
+  font-weight:700;font-size:15px;color:var(--ink-2)}
+.li .av.hot{background:var(--bad-bg);color:var(--bad)}
+.li .av.ok{background:var(--ok-bg);color:var(--ok)}
+.li .bd{flex:1 1 auto;min-width:0}
+.li .bd{display:block}
+.li .t1{display:block;font-weight:600;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.li .t2{display:block;font-size:12.5px;color:var(--ink-3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.li .rt{flex:0 0 auto;text-align:right}
+.chev{color:var(--line-2);font-size:19px;flex:0 0 auto}
+
+/* ---------- nhãn ---------- */
+.p{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;font-weight:600;padding:3px 9px;border-radius:999px;white-space:nowrap}
+.p.ok{background:var(--ok-bg);color:var(--ok)} .p.bad{background:var(--bad-bg);color:var(--bad)}
+.p.wa{background:var(--warn-bg);color:var(--warn)} .p.nu{background:var(--soft);color:var(--ink-3)}
+
+/* ---------- ô nhập ---------- */
+.f{margin-bottom:12px}
+.f label{display:block;font-size:12.5px;font-weight:600;color:var(--ink-2);margin-bottom:5px}
+.f input,.f select{padding:13px 14px;border-radius:11px;background:var(--card);
+  box-shadow:inset 0 0 0 1.5px var(--line-2);border:0;color:var(--ink);font-weight:500}
+.f input:focus,.f select:focus{outline:0;box-shadow:inset 0 0 0 2px var(--spark-ink)}
+.f .hint{font-size:11.5px;color:var(--ink-3);margin-top:5px}
+.chips{display:flex;gap:7px;flex-wrap:wrap}
+.chips button{padding:9px 14px;border-radius:999px;font-size:13.5px;font-weight:600;background:var(--card);
+  color:var(--ink-2);box-shadow:inset 0 0 0 1.5px var(--line-2)}
+.chips button[aria-pressed="true"]{background:var(--steel);color:#fff;box-shadow:none}
+.step{display:flex;gap:6px;align-items:center}
+.step button{flex:0 0 40px;height:46px;border-radius:11px;background:var(--soft);font-size:21px;font-weight:600;color:var(--ink-2)}
+.step input{flex:1 1 auto;min-width:0;text-align:center;font-family:var(--mono);font-size:17px;font-weight:600;padding:13px 4px}
+.step input::-webkit-outer-spin-button,.step input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.step input[type=number]{-moz-appearance:textfield}
+
+/* ---------- sơ đồ cắt ---------- */
+.bars{margin-top:10px}
+.brow{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.brow .bl{flex:0 0 42px;font-size:11px;color:var(--ink-3);font-family:var(--mono)}
+.bar2{flex:1;display:flex;height:26px;border-radius:5px;overflow:hidden;background:var(--soft)}
+.sg{background:var(--steel);color:#fff;font-size:10.5px;font-family:var(--mono);display:grid;place-items:center;
+  border-right:2px solid var(--spark);min-width:0;overflow:hidden}
+.sg:last-child{border-right:0}
+.rs{background:repeating-linear-gradient(45deg,var(--bad-bg),var(--bad-bg) 4px,#fff 4px,#fff 8px)}
+
+/* ---------- Zalo ---------- */
+.z{background:#E8EDF2;border-radius:var(--r);padding:12px;margin-bottom:11px}
+.zh{display:flex;align-items:center;gap:9px;padding-bottom:10px;border-bottom:1px solid #D3DBE3;margin-bottom:11px}
+.zh .za{width:32px;height:32px;border-radius:999px;background:#0068FF;color:#fff;display:grid;place-items:center;
+  font-weight:700;font-size:13px}
+.zb{max-width:84%;padding:10px 13px;border-radius:14px 14px 14px 4px;background:#fff;margin-bottom:8px;font-size:14px;
+  box-shadow:0 1px 2px rgba(43,52,64,.08)}
+.zb.me{margin-left:auto;border-radius:14px 14px 4px 14px;background:#D6E9FF}
+.zb .zt{font-size:10.5px;color:var(--ink-3);text-align:right;margin-top:5px}
+.zq{background:var(--card);border-radius:11px;padding:12px;margin-top:8px}
+
+/* ---------- vặt ---------- */
+.note{font-size:12px;color:var(--ink-3);line-height:1.5;margin-top:10px}
+.hr{height:1px;background:var(--line);margin:14px 0}
+.dl{display:flex;justify-content:space-between;gap:10px;padding:8px 0;font-size:14px;border-bottom:1px dashed var(--line)}
+.dl:last-child{border-bottom:0}
+.dl b{font-family:var(--mono);font-weight:600}
+.tot{display:flex;justify-content:space-between;gap:10px;margin-top:10px;padding-top:11px;border-top:2px solid var(--ink);font-weight:700;font-size:16px}
+.tot b{font-family:var(--mono)}
+.bk{display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:600;color:var(--ink-3);margin-bottom:10px}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:26px;background:var(--steel);color:#fff;
+  padding:13px 20px;border-radius:12px;font-size:14px;font-weight:500;box-shadow:0 8px 24px rgba(43,52,64,.3);
+  z-index:99;max-width:400px;text-align:center}
+.empty{text-align:center;padding:40px 20px;color:var(--ink-3)}
+.empty .e1{font-size:34px;margin-bottom:10px;opacity:.3}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style></head><body>
+
+<div class="top">
+  <div class="wm"><span>IronSpace</span><span id="wmr">Bản dùng thử</span></div>
+  <div class="who" id="who"></div>
+</div>
+<div class="phone">
+  <div class="bar" id="bar"></div>
+  <div class="scr" id="scr"></div>
+  <div class="nav" id="nav"></div>
+</div>
+<script>
+/* ===================== TOÁN LÕI (giữ nguyên từ bản đã kiểm) ===================== */
+function pack(parts, barLen, kerf){
+  const items=[]; parts.forEach(p=>{for(let i=0;i<p.qty;i++) items.push({len:p.len,label:p.label});});
+  items.sort((a,b)=>b.len-a.len);
+  if (items.some(i=>i.len>barLen)) return null;
+  const bars=[];
+  for (const it of items){ let placed=false;
+    for (const b of bars){ const need=b.items.length?kerf+it.len:it.len;
+      if (b.used+need<=barLen+1e-9){ b.used+=need; b.items.push(it); placed=true; break; } }
+    if (!placed) bars.push({used:it.len,items:[it]}); }
+  return bars;
+}
+function plan(parts, barLen, kerf){
+  const bars=pack(parts,barLen,kerf); if(!bars) return null;
+  const netMm=parts.reduce((s,p)=>s+p.len*p.qty,0), grossMm=bars.length*barLen;
+  const kerfMm=bars.reduce((s,b)=>s+(b.items.length-1)*kerf,0);
+  return { bars, soCay:bars.length, netMm, grossMm, kerfMm, dauMauMm:grossMm-netMm-kerfMm,
+    haoPct:(grossMm-netMm)/grossMm*100, soNhat:bars.reduce((s,b)=>s+Math.max(0,b.items.length-1),0),
+    duPhongMin:Math.min(...bars.map(b=>barLen-b.used)) };
+}
+const DU_PHONG=10;
+function timLui(parts, barLen, kerf, maxLui=30){
+  const goc=plan(parts,barLen,kerf); if(!goc) return null;
+  for(let d=1; d<=maxLui; d++) for(let i=0;i<parts.length;i++){
+    if (parts[i].len-d<=0) continue;
+    const thu=parts.map((q,j)=> j===i?{...q,len:q.len-d}:{...q});
+    const r=plan(thu,barLen,kerf);
+    if (r && r.soCay<goc.soCay && r.duPhongMin>=DU_PHONG) return {i,lui:d,lenMoi:thu[i].len,r};
+  }
+  return null;
+}
+const matCat=(d,a,b,t)=> d==="ong" ? Math.PI*t*(a-t) : 2*t*(a+b)-4*t*t;
+const kgCay=(m,L)=> matCat(m.d,m.a,m.b,m.t)*L*m.rho/1e6;
+
+/* ===================== DỮ LIỆU ===================== */
+const VT=[
+ {id:"i5012",ten:"Inox 304 hộp 50×50",mo:"dày 1,2 ly",d:"hop",a:50,b:50,t:1.2,rho:7.93,gia:65000},
+ {id:"i4012",ten:"Inox 304 hộp 40×40",mo:"dày 1,2 ly",d:"hop",a:40,b:40,t:1.2,rho:7.93,gia:65000},
+ {id:"i3412",ten:"Inox 304 ống Ø34",  mo:"dày 1,2 ly",d:"ong",a:34,b:34,t:1.2,rho:7.93,gia:65000},
+ {id:"s4080",ten:"Sắt hộp 40×80",     mo:"dày 1,4 ly",d:"hop",a:40,b:80,t:1.4,rho:7.85,gia:19800},
+ {id:"s5050",ten:"Sắt hộp 50×50",     mo:"dày 1,4 ly",d:"hop",a:50,b:50,t:1.4,rho:7.85,gia:19800},
+];
+const HM=["Cổng","Lan can","Cầu thang","Mái che","Khung sắt","Cửa inox"];
+const CD=["Nhận đơn","Cắt","Hàn","Mài & đánh bóng","Lắp đặt","Xong"];
+
+const S={
+ vai:"chu", tab:"hom", xem:null, toast:null,
+ xuong:"Xưởng cơ khí Minh Sáu", chu:"anh Sáu",
+ dinhMuc:{ cay:6000, mach:2.5, gioCong:60000, dien:1500, da:15000, nhatMoiDa:40, que:1375, khi:2000 },
+ nhap:{ hm:"Cổng", vt:"i5012", len:1500, qty:12, gio:6, han:28, may:3.5, ban:3900000 },
+ don:[
+  {id:"DH-238",kh:"Chị Hoa",            hang:"Lan can ban công",   ban: 8400000, von: 5630000, cd:2, thu:0,        han:null},
+  {id:"DH-237",kh:"Anh Dũng",           hang:"Cầu thang xoắn",     ban:24500000, von:17100000, cd:1, thu:8000000,  han:null},
+  {id:"DH-236",kh:"Anh Phúc",           hang:"Khung kính mặt tiền",ban:12900000, von: 9050000, cd:3, thu:4000000,  han:null},
+  {id:"DH-240",kh:"Anh Quý",            hang:"Khung kệ kho",       ban:18500000, von:12900000, cd:2, thu:0,        han:null},
+  {id:"DH-235",kh:"Nhà thầu Minh Phát", hang:"Khung mái che",      ban:31200000, von:21400000, cd:5, thu:10000000, han:-18, ct:false},
+  {id:"DH-233",kh:"Anh Bình",           hang:"Cửa sổ sắt 12 bộ",   ban:14600000, von:10350000, cd:5, thu:0,        han:-42, ct:true},
+  {id:"DH-231",kh:"Anh Lộc",            hang:"Lan can cầu thang",  ban:16800000, von:11600000, cd:5, thu:8000000,  han:-22, ct:true},
+  {id:"DH-230",kh:"Chị Lan",            hang:"Hàng rào inox",      ban: 9800000, von: 6700000, cd:5, thu:3000000,  han:-5,  ct:true},
+ ],
+ phoi:[ {len:1495,qty:4,tu:"DH-237"}, {len:2010,qty:2,tu:"DH-233"}, {len:1200,qty:3,tu:"DH-235"},
+        {len:880,qty:6,tu:"DH-230"}, {len:640,qty:5,tu:"DH-228"} ],
+ moi:[ {id:"ZL-104",kh:"Anh Tuấn",gio:"07:42",
+        t:"Alo em ơi, anh cần làm lan can ban công inox 304 hộp 40x40, 14 cây dài 1300mm. Báo giá giúp anh."},
+       {id:"ZL-102",kh:"Nhà thầu Đại Tín",gio:"06:58",anh:true,
+        t:"[Ảnh chụp bản vẽ tay trên giấy kẻ ô]"} ],
+ chat:[ {ai:"kh",gio:"07:42",t:"Alo em ơi, anh cần làm lan can ban công inox 304 hộp 40x40, 14 cây dài 1300mm. Báo giá giúp anh."} ],
+ chi:[ {ngay:"09/10",mo:"Thép hộp 40×80 — 20 cây",tien:6336000,don:"DH-240"},
+       {ngay:"08/10",mo:"Que hàn inox + đá cắt",   tien:  820000,don:"DH-238"},
+       {ngay:"06/10",mo:"Inox 304 hộp 50×50 — 12 cây",tien:8697000,don:"DH-236"} ],
+ thoDon:"DH-238",
+};
+
+/* ===================== TIỆN ===================== */
+const F=n=>Math.round(n).toLocaleString("vi-VN");
+const F2=(n,d=2)=>Number(n).toLocaleString("vi-VN",{minimumFractionDigits:d,maximumFractionDigits:d});
+const FP=n=>n<1?F2(n,4):F2(n,2);
+const Ftr=n=>F2(n/1e6,1)+" tr";
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const vt=()=>VT.find(v=>v.id===S.nhap.vt);
+const no=o=>Math.max(0,o.ban-o.thu);
+const qh=o=>o.han===null?0:Math.max(0,-o.han);
+const dangLam=()=>S.don.filter(o=>o.cd<5);
+const noDon=()=>S.don.filter(o=>no(o)>0);
+function toast(t){ S.toast=t; ve(); clearTimeout(window._tt); window._tt=setTimeout(()=>{S.toast=null;ve();},2600); }
+function tang(d){ if(d<=0) return {t:"Chưa đến hạn",c:"nu"};
+  if(d<=7) return {t:"Nhắc nhẹ",c:"ok"}; if(d<=15) return {t:"Gửi đối chiếu",c:"wa"};
+  if(d<=30) return {t:"Gọi điện",c:"wa"}; return {t:"Dừng nhận đơn mới",c:"bad"}; }
+
+/* ===================== GIÁ ===================== */
+function tinh(){
+  const n=S.nhap, m=vt(), D=S.dinhMuc;
+  const p=plan([{len:n.len,qty:n.qty,label:n.hm}], D.cay, D.mach);
+  if(!p) return null;
+  const kg=kgCay(m,D.cay), vatTu=p.soCay*kg*m.gia;
+  const cong=n.gio*D.gioCong;
+  const an=Math.ceil(p.soNhat/D.nhatMoiDa)*D.da + n.han*D.que + n.han*D.khi + n.may*D.dien;
+  const von=vatTu+cong+an, loi=n.ban-von;
+  return {p,m,kg,vatTu,cong,an,von,loi,pct:n.ban>0?loi/n.ban*100:0};
+}
+function khoPhoi(){
+  const n=S.nhap, D=S.dinhMuc;
+  const ds=[]; S.phoi.forEach(o=>{for(let i=0;i<o.qty;i++) ds.push(o);});
+  const hop=ds.filter(o=>o.len>=n.len).length;
+  return hop>0?{soDoan:hop,len:S.phoi.filter(o=>o.len>=n.len)[0]}:null;
+}
+
+/* ===================== VAI ===================== */
+const ICO={
+ hom:'<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>',
+ bao:'<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>',
+ don:'<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h18M3 12h18M3 17h18"/></svg>',
+ thu:'<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6" width="19" height="12" rx="2"/><circle cx="12" cy="12" r="2.6"/></svg>',
+ chi:'<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>',
+ viec:'<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m4 12.5 5 5L20 6.5"/></svg>',
+ zalo:'<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 9.6 9.6 0 0 1-2.8-.4L3 21l1.6-4.7A8.3 8.3 0 0 1 3 11.5a8.4 8.4 0 0 1 9-8.4 8.4 8.4 0 0 1 9 8.4Z"/></svg>',
+};
+const VAI={
+ chu:  {ten:"Chủ xưởng", ai:"Anh Sáu",  tabs:[["hom","Hôm nay"],["bao","Báo giá"],["don","Đơn hàng"],["thu","Thu tiền"]]},
+ so:   {ten:"Giữ sổ",    ai:"Chị Hạnh", tabs:[["thu","Thu tiền"],["chi","Chi phí"],["don","Đơn hàng"]]},
+ tho:  {ten:"Thợ",       ai:"Anh Tám",  tabs:[["viec","Việc của tôi"]]},
+ khach:{ten:"Khách",     ai:"Anh Tuấn", tabs:[["zalo","Zalo"]]},
+};
+
+/* ===================== HÔM NAY ===================== */
+function vHom(){
+  const pt=noDon().reduce((s,o)=>s+no(o),0), q=noDon().filter(o=>qh(o)>0);
+  const qt=q.reduce((s,o)=>s+no(o),0);
+  const viec=[];
+  q.sort((a,b)=>qh(b)-qh(a)).slice(0,3).forEach(o=>viec.push({
+    av:"!",cls:"hot",t1:`${o.kh} nợ ${Ftr(no(o))}`,t2:`${o.hang} · quá hạn ${qh(o)} ngày · ${tang(qh(o)).t}`,
+    go:()=>{S.vai==="chu"?S.tab="thu":S.tab="thu"; S.xem={k:"no",id:o.id}; ve();}}));
+  S.don.filter(o=>o.cd===5&&!o.ct).forEach(o=>viec.push({
+    av:"□",cls:"",t1:`${o.id} xong rồi, chưa có giấy tờ`,t2:`${o.kh} · bấm để nghiệm thu và gửi hồ sơ`,
+    go:()=>{S.tab="don"; S.xem={k:"don",id:o.id}; ve();}}));
+  S.moi.forEach(m=>viec.push({
+    av:"Z",cls:"ok",t1:`${m.kh} vừa nhắn`,t2:m.t.slice(0,54)+(m.t.length>54?"…":""),
+    go:()=>{S.tab="bao"; S.xem={k:"moi",id:m.id}; ve();}}));
+
+  return `<div class="h1">Chào ${esc(S.chu)}</div>
+  <div class="sub">Thứ bảy, 10 tháng 10 · ${dangLam().length} đơn đang chạy</div>
+  <div class="c dark">
+    <div class="lbl">KHÁCH CÒN NỢ XƯỞNG</div>
+    <div class="big" style="margin-top:4px">${F(pt)} đ</div>
+    ${qt>0?`<div class="row sb" style="margin-top:12px;padding-top:12px;border-top:1px solid #3D4859">
+      <span class="sm" style="color:#AEB9C6">Trong đó đã quá hạn</span>
+      <b class="num" style="color:#FF8A6B;font-size:16px">${F(qt)} đ</b></div>`:""}
+  </div>
+  <div class="g2">
+    <div class="c"><div class="lbl">ĐANG LÀM</div><div class="big" style="margin-top:3px">${dangLam().length}</div>
+      <div class="xs muted" style="margin-top:2px">đơn trong xưởng</div></div>
+    <div class="c" ${S.moi.length?'style="background:var(--spark-bg)"':""}>
+      <div class="lbl">KHÁCH MỚI NHẮN</div>
+      <div class="big" style="margin-top:3px;${S.moi.length?"color:var(--spark-ink)":""}">${S.moi.length}</div>
+      <div class="xs muted" style="margin-top:2px">chờ báo giá</div></div>
+  </div>
+  <div class="h2">Việc cần làm hôm nay</div>
+  ${viec.length? viec.map((v,i)=>`<button class="li" data-v="${i}">
+      <span class="av ${v.cls}">${v.av}</span>
+      <span class="bd"><span class="t1">${esc(v.t1)}</span><span class="t2">${esc(v.t2)}</span></span>
+      <span class="chev">›</span></button>`).join("")
+    : `<div class="empty"><div class="e1">✓</div>Hôm nay không có việc nào cần xử lý gấp.</div>`}
+  ${window.__viec=viec, ""}`;
+}
+
+/* ===================== BÁO GIÁ ===================== */
+function vBao(){
+  if (S.xem&&S.xem.k==="moi"){
+    const m=S.moi.find(x=>x.id===S.xem.id);
+    if(m) return `<button class="bk" data-bk="1">‹ Quay lại</button>
+      <div class="h1">${esc(m.kh)} nhắn</div><div class="sub">${esc(m.gio)} hôm nay, qua Zalo</div>
+      <div class="z"><div class="zb">${esc(m.t)}<div class="zt">${esc(m.gio)}</div></div></div>
+      ${m.anh?`<div class="c flat"><b>Đây là ảnh bản vẽ tay.</b>
+        <div class="sm muted" style="margin-top:6px">Máy không đọc được chữ viết tay, nên không tự điền số giúp anh được.
+        Anh gọi khách hỏi kích thước rồi nhập tay, hoặc bấm nút dưới để mở báo giá trống.</div>
+        <button class="b gh" style="margin-top:12px" data-md="${esc(m.id)}">Mở báo giá, nhập tay</button></div>`
+       :`<div class="c"><div class="lbl">MÁY ĐỌC ĐƯỢC</div>
+        <div class="dl"><span>Hạng mục</span><b>Lan can</b></div>
+        <div class="dl"><span>Vật tư</span><b>Inox 304 hộp 40×40</b></div>
+        <div class="dl"><span>Chiều dài</span><b>1.300 mm</b></div>
+        <div class="dl"><span>Số lượng</span><b>14 cây</b></div>
+        <div class="note">Anh xem lại giúp, sai chỗ nào sửa được ở bước sau.</div>
+        <button class="b sp" style="margin-top:12px" data-md="${esc(m.id)}">Đúng rồi, báo giá</button></div>`}`;
+  }
+  const n=S.nhap, g=tinh(), m=vt(), kg=kgCay(m,S.dinhMuc.cay);
+  const lui=g?timLui([{len:n.len,qty:n.qty,label:n.hm}],S.dinhMuc.cay,S.dinhMuc.mach):null;
+  const kho=khoPhoi();
+  return `<div class="h1">Báo giá</div><div class="sub">Nhập bốn thứ, máy tính ra giá vốn ngay</div>
+  <div class="c">
+    <div class="f"><label>Làm cái gì</label><div class="chips">
+      ${HM.map(h=>`<button data-hm="${esc(h)}" aria-pressed="${h===n.hm}">${esc(h)}</button>`).join("")}</div></div>
+    <div class="f"><label>Vật tư</label>
+      <select id="svt">${VT.map(v=>`<option value="${v.id}" ${v.id===n.vt?"selected":""}>${esc(v.ten)} — ${esc(v.mo)}</option>`).join("")}</select>
+      <div class="hint">${F2(kg,2)} kg mỗi cây 6 mét · ${F(m.gia)} đ/kg</div></div>
+    <div class="g2">
+      <div class="f"><label>Dài mỗi cây (mm)</label>
+        <div class="step"><button data-dl="-5">–</button><input id="iln" type="number" value="${n.len}"><button data-dl="5">+</button></div></div>
+      <div class="f"><label>Cần mấy cây</label>
+        <div class="step"><button data-dq="-1">–</button><input id="iqt" type="number" value="${n.qty}"><button data-dq="1">+</button></div></div>
+    </div>
+  </div>
+  ${!g?`<div class="c flat"><b>Chi tiết dài hơn cây nguyên 6.000 mm.</b>
+      <div class="sm muted" style="margin-top:6px">Giảm chiều dài xuống dưới 6.000 mm giúp em.</div></div>`:`
+  <div class="c dark">
+    <div class="row sb"><div><div class="lbl">PHẢI MUA</div>
+      <div class="big" style="margin-top:3px">${g.p.soCay} cây</div></div>
+      <div style="text-align:right"><div class="lbl">BỎ ĐI</div>
+      <div class="mid" style="margin-top:7px;color:${g.p.haoPct>10?"#FF8A6B":"#7BD8A4"}">${FP(g.p.haoPct)} %</div></div></div>
+    <div class="bars">${g.p.bars.map((b,i)=>{const du=S.dinhMuc.cay-b.used;
+      return `<div class="brow"><span class="bl">Cây ${i+1}</span><div class="bar2">
+        ${b.items.map(it=>`<div class="sg" style="flex:0 0 ${(it.len/S.dinhMuc.cay*100).toFixed(2)}%">${F(it.len)}</div>`).join("")}
+        ${du>1?`<div class="sg rs" style="flex:0 0 ${(du/S.dinhMuc.cay*100).toFixed(2)}%"></div>`:""}</div></div>`;}).join("")}</div>
+    <div class="xs" style="color:#AEB9C6;margin-top:8px">Ô gạch chéo là phần thép bỏ đi. Vạch cam là mạch cắt ${F2(S.dinhMuc.mach,1)} mm.</div>
+  </div>
+  ${lui?`<div class="c" style="background:var(--spark-bg)">
+    <b style="color:var(--spark-ink)">Lùi ${lui.lui} mm thì bớt được ${g.p.soCay-lui.r.soCay} cây</b>
+    <div class="sm" style="margin-top:6px">Cắt ${F(lui.lenMoi)} mm thay vì ${F(n.len)} mm thì bỏ đi chỉ còn ${FP(lui.r.haoPct)}%,
+      tiết kiệm <b class="num">${F((g.p.soCay-lui.r.soCay)*kg*m.gia)} đ</b> tiền thép riêng đơn này.</div>
+    <button class="b sp sm" style="margin-top:11px;width:100%" data-ap="${lui.lenMoi}">Áp dụng ${F(lui.lenMoi)} mm</button></div>`:""}
+  ${kho?`<div class="c flat"><b>Kho còn ${kho.soDoan} đoạn dùng được</b>
+    <div class="sm muted" style="margin-top:5px">Đoạn ${F(kho.len.len)} mm thừa từ ${esc(kho.len.tu)} — cắt được chi tiết ${F(n.len)} mm, đỡ phải mua cây mới.</div></div>`:""}
+  <div class="c">
+    <div class="dl"><span>Thép ${g.p.soCay} cây × ${F2(kg,2)} kg</span><b>${F(g.vatTu)} đ</b></div>
+    <div class="dl"><span>Công thợ ${n.gio} giờ</span><b>${F(g.cong)} đ</b></div>
+    <div class="dl"><span>Đá cắt, que hàn, khí, điện</span><b>${F(g.an)} đ</b></div>
+    <div class="tot"><span>Giá vốn</span><b>${F(g.von)} đ</b></div>
+    <div class="f" style="margin-top:16px"><label>Giá báo cho khách</label>
+      <input id="iban" type="number" value="${n.ban}"></div>
+    <div class="row sb" style="padding:12px 14px;border-radius:11px;background:${g.pct<0?"var(--bad-bg)":g.pct<15?"var(--warn-bg)":"var(--ok-bg)"}">
+      <span style="font-weight:600;color:${g.pct<0?"var(--bad)":g.pct<15?"var(--warn)":"var(--ok)"}">
+        ${g.loi<0?"Đơn này LỖ":g.pct<15?"Lời mỏng":"Lời tốt"}</span>
+      <b class="num" style="font-size:19px;color:${g.pct<0?"var(--bad)":g.pct<15?"var(--warn)":"var(--ok)"}">${F(g.loi)} đ · ${F2(g.pct,1)}%</b></div>
+    ${g.pct<15?`<div class="note">Xưởng đặt ngưỡng 15%. Dưới mức này nên xem lại giá bán hoặc lùi kích thước.</div>`:""}
+    <button class="b sp" style="margin-top:14px" data-gui="1">Gửi báo giá qua Zalo</button>
+    <div class="note">Báo giá gửi đi có ghi rõ định mức vật tư và hạn hiệu lực 7 ngày.</div>
+  </div>`}`;
+}
+
+/* ===================== ĐƠN HÀNG ===================== */
+function vDon(){
+  if (S.xem&&S.xem.k==="don"){
+    const o=S.don.find(x=>x.id===S.xem.id); if(!o) {S.xem=null; return vDon();}
+    const t=tang(qh(o));
+    return `<button class="bk" data-bk="1">‹ Đơn hàng</button>
+    <div class="h1">${esc(o.hang)}</div><div class="sub">${esc(o.id)} · ${esc(o.kh)}</div>
+    <div class="c"><div class="lbl">ĐANG LÀM TỚI ĐÂU</div>
+      ${CD.map((c,i)=>`<div class="row" style="align-items:center;gap:11px;padding:9px 0;border-bottom:${i<CD.length-1?"1px solid var(--line)":"0"}">
+        <span style="flex:0 0 24px;height:24px;border-radius:999px;display:grid;place-items:center;font-size:12px;font-weight:700;
+          background:${i<o.cd?"var(--ok)":i===o.cd?"var(--spark-ink)":"var(--soft)"};
+          color:${i<=o.cd?"#fff":"var(--ink-3)"}">${i<o.cd?"✓":i+1}</span>
+        <span style="flex:1;font-weight:${i===o.cd?600:400};color:${i<o.cd?"var(--ink-3)":"var(--ink)"}">${esc(c)}</span>
+        ${i===o.cd?'<span class="p wa">Đang làm</span>':""}</div>`).join("")}
+    </div>
+    <div class="c">
+      <div class="dl"><span>Giá bán</span><b>${F(o.ban)} đ</b></div>
+      ${S.vai!=="tho"?`<div class="dl"><span>Giá vốn</span><b>${F(o.von)} đ</b></div>
+      <div class="dl"><span>Lời</span><b style="color:var(--ok)">${F(o.ban-o.von)} đ</b></div>`:""}
+      <div class="dl"><span>Khách đã trả</span><b>${F(o.thu)} đ</b></div>
+      <div class="tot"><span>Còn nợ</span><b style="color:${no(o)>0?"var(--bad)":"var(--ok)"}">${F(no(o))} đ</b></div>
+    </div>
+    ${o.cd===5&&!o.ct?`<div class="c" style="background:var(--spark-bg)">
+      <b style="color:var(--spark-ink)">Đơn xong rồi nhưng chưa có giấy tờ</b>
+      <div class="sm" style="margin-top:6px">Chưa có biên bản thì khách khất nợ là xưởng chịu. Bấm một nút, máy làm đủ ba loại giấy và gửi thẳng vào Zalo khách.</div>
+      <button class="b sp" style="margin-top:12px" data-nt="${esc(o.id)}">Nghiệm thu và gửi hồ sơ</button></div>`:""}
+    ${o.ct?`<div class="c flat"><div class="row sb"><b>Hồ sơ đã gửi khách</b><span class="p ok">Đủ 3 giấy</span></div>
+      <div class="sm muted" style="margin-top:8px">Biên bản nghiệm thu · Xác nhận khối lượng · Biên bản đối chiếu công nợ</div></div>`:""}
+    ${no(o)>0&&qh(o)>0?`<div class="c"><div class="row sb"><b>Quá hạn ${qh(o)} ngày</b><span class="p ${t.c}">${esc(t.t)}</span></div>
+      <button class="b gh" style="margin-top:12px" data-nn="${esc(o.id)}">Nhắc khách trả tiền</button></div>`:""}`;
+  }
+  const dl=dangLam(), xg=S.don.filter(o=>o.cd===5);
+  const row=o=>`<button class="li" data-od="${esc(o.id)}">
+    <span class="av ${o.cd===5?(no(o)>0?"hot":"ok"):""}">${o.cd===5?(no(o)>0?"!":"✓"):o.cd}</span>
+    <span class="bd"><span class="t1">${esc(o.hang)}</span>
+      <span class="t2">${esc(o.kh)} · ${o.cd===5?"xong":esc(CD[o.cd])}${no(o)>0?` · còn nợ ${Ftr(no(o))}`:""}</span></span>
+    <span class="rt"><b class="num sm">${Ftr(o.ban)}</b></span><span class="chev">›</span></button>`;
+  return `<div class="h1">Đơn hàng</div><div class="sub">${dl.length} đang làm · ${xg.length} đã xong</div>
+    <div class="h2">Đang làm trong xưởng</div>${dl.map(row).join("")||'<div class="empty">Không có đơn nào đang chạy.</div>'}
+    <div class="h2">Đã xong</div>${xg.map(row).join("")}`;
+}
+
+/* ===================== THU TIỀN ===================== */
+function vThu(){
+  if (S.xem&&S.xem.k==="no"){
+    const o=S.don.find(x=>x.id===S.xem.id); if(!o){S.xem=null; return vThu();}
+    const d=qh(o), t=tang(d);
+    return `<button class="bk" data-bk="1">‹ Thu tiền</button>
+    <div class="h1">${esc(o.kh)}</div><div class="sub">${esc(o.hang)} · ${esc(o.id)}</div>
+    <div class="c dark"><div class="lbl">CÒN NỢ</div><div class="big" style="margin-top:4px">${F(no(o))} đ</div>
+      <div class="sm" style="color:#AEB9C6;margin-top:8px">Đơn ${F(o.ban)} đ · đã trả ${F(o.thu)} đ${d>0?` · quá hạn ${d} ngày`:""}</div></div>
+    ${!o.ct?`<div class="c" style="background:var(--bad-bg)">
+      <b style="color:var(--bad)">Chưa có giấy tờ để đòi</b>
+      <div class="sm" style="margin-top:6px">Nợ đòi không được phần lớn là vì thiếu giấy, không phải vì khách xấu. Làm hồ sơ trước đã.</div>
+      <button class="b sp" style="margin-top:12px" data-nt="${esc(o.id)}">Nghiệm thu và gửi hồ sơ</button></div>`:""}
+    <div class="c"><div class="row sb" style="margin-bottom:10px"><b>Nhắc khách</b><span class="p ${t.c}">${esc(t.t)}</span></div>
+      <div class="sm muted" style="margin-bottom:12px">Quá hạn ${d} ngày thì nên ${d<=7?"nhắc nhẹ cho đỡ ngại":d<=15?"gửi kèm bản đối chiếu công nợ":"gọi điện và gửi lại đủ giấy tờ"}.</div>
+      <button class="b" data-nn="${esc(o.id)}">Gửi lời nhắc qua Zalo</button>
+      <button class="b gh" style="margin-top:9px" data-dt="${esc(o.id)}">Khách đã trả đủ</button></div>`;
+  }
+  const ds=noDon().sort((a,b)=>qh(b)-qh(a));
+  const tong=ds.reduce((s,o)=>s+no(o),0), quaHan=ds.filter(o=>qh(o)>0).reduce((s,o)=>s+no(o),0);
+  return `<div class="h1">Thu tiền</div><div class="sub">${ds.length} khách còn nợ xưởng</div>
+  <div class="g2"><div class="c"><div class="lbl">TỔNG PHẢI THU</div><div class="mid" style="margin-top:5px">${Ftr(tong)}</div></div>
+    <div class="c" style="background:var(--bad-bg)"><div class="lbl">ĐÃ QUÁ HẠN</div>
+      <div class="mid" style="margin-top:5px;color:var(--bad)">${Ftr(quaHan)}</div></div></div>
+  <div class="h2">Ai nợ lâu nhất xếp trước</div>
+  ${ds.map(o=>{const d=qh(o),t=tang(d);
+    return `<button class="li" data-nod="${esc(o.id)}">
+      <span class="av ${d>30?"hot":d>0?"":"ok"}">${esc(o.kh.replace("Nhà thầu ","")[0])}</span>
+      <span class="bd"><span class="t1">${esc(o.kh)}</span>
+        <span class="t2">${d>0?`quá hạn ${d} ngày · ${t.t}`:"chưa đến hạn"}${!o.ct&&o.cd===5?" · thiếu giấy tờ":""}</span></span>
+      <span class="rt"><b class="num" style="font-size:15px;color:${d>0?"var(--bad)":"var(--ink)"}">${Ftr(no(o))}</b></span>
+      <span class="chev">›</span></button>`;}).join("")}`;
+}
+
+/* ===================== CHI PHÍ (người giữ sổ) ===================== */
+function vChi(){
+  const tong=S.chi.reduce((s,c)=>s+c.tien,0);
+  return `<div class="h1">Chi phí vật tư</div><div class="sub">Ghi lại để biết đơn nào thật sự lời</div>
+  <div class="c dark"><div class="lbl">ĐÃ CHI THÁNG NÀY</div><div class="big" style="margin-top:4px">${F(tong)} đ</div></div>
+  <div class="c"><div class="lbl" style="margin-bottom:10px">GHI MỘT KHOẢN MỚI</div>
+    <div class="f"><label>Mua gì</label><input id="cmo" placeholder="Ví dụ: Thép hộp 40×80 — 20 cây"></div>
+    <div class="g2"><div class="f"><label>Hết bao nhiêu (đ)</label><input id="ctien" type="number" placeholder="0"></div>
+      <div class="f"><label>Cho đơn nào</label><select id="cdon">
+        <option value="">Chưa rõ</option>${S.don.map(o=>`<option value="${o.id}">${o.id} — ${esc(o.kh)}</option>`).join("")}</select></div></div>
+    <button class="b" data-gc="1">Ghi vào sổ</button></div>
+  <div class="h2">Đã ghi gần đây</div>
+  ${S.chi.map(c=>`<div class="li" style="cursor:default"><span class="av">₫</span>
+    <span class="bd"><span class="t1">${esc(c.mo)}</span><span class="t2">${esc(c.ngay)}${c.don?" · "+esc(c.don):""}</span></span>
+    <span class="rt"><b class="num sm">${F(c.tien)} đ</b></span></div>`).join("")}`;
+}
+
+/* ===================== THỢ ===================== */
+function vViec(){
+  const ds=dangLam(); const o=S.don.find(x=>x.id===S.thoDon)||ds[0];
+  if(!o) return `<div class="h1">Việc của tôi</div>
+    <div class="empty"><div class="e1">☕</div>Hôm nay chưa có việc nào được giao.</div>`;
+  return `<div class="h1">Việc của tôi</div><div class="sub">Chào anh Tám · ca sáng</div>
+  ${ds.length>1?`<div class="f"><label>Đang làm đơn</label><select id="stho">
+    ${ds.map(x=>`<option value="${x.id}" ${x.id===o.id?"selected":""}>${esc(x.hang)} — ${esc(x.kh)}</option>`).join("")}</select></div>`:""}
+  <div class="c"><div class="lbl">${esc(o.id)}</div>
+    <div style="font-size:19px;font-weight:700;margin:3px 0 2px">${esc(o.hang)}</div>
+    <div class="sm muted">Khách ${esc(o.kh)}</div>
+    <div class="hr"></div>
+    ${CD.map((c,i)=>`<div class="row" style="align-items:center;gap:12px;padding:11px 0;border-bottom:${i<CD.length-1?"1px solid var(--line)":"0"}">
+      <span style="flex:0 0 28px;height:28px;border-radius:999px;display:grid;place-items:center;font-size:13px;font-weight:700;
+        background:${i<o.cd?"var(--ok)":i===o.cd?"var(--spark-ink)":"var(--soft)"};color:${i<=o.cd?"#fff":"var(--ink-3)"}">${i<o.cd?"✓":i+1}</span>
+      <span style="flex:1;font-size:16px;font-weight:${i===o.cd?700:400};color:${i<o.cd?"var(--ink-3)":"var(--ink)"}">${esc(c)}</span>
+      ${i===o.cd?'<span class="p wa">Đang làm</span>':""}</div>`).join("")}
+  </div>
+  ${o.cd<5?`<button class="b sp" data-xong="${esc(o.id)}" style="padding:19px;font-size:17px">
+      Chụp ảnh và báo xong “${esc(CD[o.cd])}”</button>`
+    :`<div class="c flat"><b>Đơn này làm xong rồi.</b><div class="sm muted" style="margin-top:5px">Chờ chủ xưởng nghiệm thu với khách.</div></div>`}
+  <button class="b gh" style="margin-top:10px" data-tc="1">Tôi không dùng được cái này</button>
+  <div class="note">Bấm một nút, chụp một ảnh. Không phải gõ chữ, không phải nhập số.
+    Xưởng không thu thập thời gian làm của từng người, nên không có bảng xếp hạng ai nhanh ai chậm.</div>`;
+}
+
+/* ===================== ZALO (khách) ===================== */
+function vZalo(){
+  return `<div class="z" style="margin:-14px -14px 0;border-radius:0;min-height:100%">
+    <div class="zh"><span class="za">MS</span>
+      <div><div style="font-weight:700;font-size:14.5px">${esc(S.xuong)}</div>
+        <div class="xs muted">Official Account · Đang hoạt động</div></div></div>
+    ${S.chat.map(m=>{
+      if(m.loai==="bg") return `<div class="zb" style="max-width:94%">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--spark-ink)">BÁO GIÁ ${esc(m.ma)}</div>
+        <div style="font-weight:600;margin-top:5px">${esc(m.hang)}</div>
+        <div class="zq"><div class="dl"><span>Vật tư</span><b>${m.cay} cây</b></div>
+          <div class="dl"><span>Quy cách</span><b>${m.qty} × ${F(m.len)} mm</b></div>
+          <div class="dl"><span>Hạn giữ giá</span><b>7 ngày</b></div>
+          <div class="tot"><span>Tổng</span><b>${F(m.tien)} đ</b></div></div>
+        ${m.ok?'<div class="p ok" style="margin-top:9px">Anh đã đồng ý</div>'
+              :'<button class="b sp sm" style="width:100%;margin-top:10px" data-dy="1">Đồng ý báo giá</button>'}
+        <div class="zt">${esc(m.gio)}</div></div>`;
+      if(m.loai==="ct") return `<div class="zb" style="max-width:94%">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--ok)">HỒ SƠ NGHIỆM THU</div>
+        <div class="sm" style="margin-top:7px;line-height:1.9">
+          ${["Biên bản nghiệm thu","Xác nhận khối lượng","Biên bản đối chiếu công nợ"].map(x=>
+            `<span style="display:inline-block;width:10px;height:13px;background:var(--steel);border-radius:2px;vertical-align:-2px;margin-right:8px"></span>${x}<br>`).join("")}</div>
+        <div class="zq" style="margin-top:4px"><div class="dl"><span>Số tiền còn lại</span><b>${F(m.tien)} đ</b></div>
+          <div class="dl"><span>Hạn trả</span><b>15 ngày</b></div></div>
+        ${m.tra?'<div class="p ok" style="margin-top:9px">Anh báo đã chuyển</div>'
+               :'<button class="b sm" style="width:100%;margin-top:10px" data-tt="1">Tôi đã chuyển khoản</button>'}
+        <div class="zt">${esc(m.gio)}</div></div>`;
+      return `<div class="zb ${m.ai==="kh"?"me":""}">${esc(m.t)}<div class="zt">${esc(m.gio)}</div></div>`;
+    }).join("")}
+    <div style="margin-top:14px;display:flex;gap:8px">
+      <input id="zin" placeholder="Nhắn cho xưởng…" style="flex:1;padding:12px 14px;border-radius:999px;border:0;background:#fff">
+      <button class="b sp" style="width:auto;padding:12px 20px;margin:0" data-zg="1">Gửi</button></div>
+    <div class="note" style="padding:0 2px">Khách không cài ứng dụng nào. Tất cả diễn ra trong Zalo họ vẫn nhắn hằng ngày.</div>
+  </div>`;
+}
+
+/* ===================== VẼ ===================== */
+const V={hom:vHom,bao:vBao,don:vDon,thu:vThu,chi:vChi,viec:vViec,zalo:vZalo};
+function ve(){
+  const vai=VAI[S.vai];
+  if(!vai.tabs.some(t=>t[0]===S.tab)) { S.tab=vai.tabs[0][0]; S.xem=null; }
+
+  document.getElementById("who").innerHTML = Object.entries(VAI).map(([k,v])=>
+    `<button data-vai="${k}" aria-current="${k===S.vai}">${esc(v.ten)}<small>${esc(v.ai)}</small></button>`).join("");
+
+  const nMoi=S.moi.length;
+  document.getElementById("bar").innerHTML =
+    `<div><div class="lg">Iron<i>Space</i></div><div class="sub">${esc(S.xuong)} · ${esc(vai.ai)}</div></div>
+     ${S.vai==="chu"&&nMoi?`<div class="bell">🔔<b>${nMoi}</b></div>`:S.vai==="khach"?"":`<div class="bell">${esc(vai.ten[0])}</div>`}`;
+
+  document.getElementById("scr").innerHTML = (V[S.tab]||vHom)();
+
+  const nav=document.getElementById("nav");
+  nav.style.display = vai.tabs.length>1 ? "" : "none";
+  nav.innerHTML = vai.tabs.map(([k,l])=>
+    `<button data-tab="${k}" aria-current="${k===S.tab}">${ICO[k]||""}${
+      k==="bao"&&nMoi?'<span class="dot"></span>':""}<span>${esc(l)}</span></button>`).join("");
+
+  document.querySelectorAll(".toast").forEach(e=>e.remove());
+  if(S.toast){ const d=document.createElement("div"); d.className="toast"; d.textContent=S.toast; document.body.appendChild(d); }
+  bind();
+}
+const on=(sel,fn)=>document.querySelectorAll(sel).forEach(e=>e.onclick=()=>fn(e));
+const gio=()=>{const d=new Date();return `${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`;};
+
+function bind(){
+  on("[data-vai]",e=>{ S.vai=e.dataset.vai; S.xem=null; S.tab=VAI[S.vai].tabs[0][0]; ve(); });
+  on("[data-tab]",e=>{ S.tab=e.dataset.tab; S.xem=null; ve(); document.getElementById("scr").scrollTop=0; });
+  on("[data-bk]",()=>{ S.xem=null; ve(); });
+  on("[data-v]",e=>{ const v=(window.__viec||[])[+e.dataset.v]; if(v) v.go(); });
+
+  /* --- báo giá --- */
+  on("[data-hm]",e=>{ S.nhap.hm=e.dataset.hm; ve(); });
+  const sv=document.getElementById("svt"); if(sv) sv.onchange=()=>{ S.nhap.vt=sv.value; ve(); };
+  on("[data-dl]",e=>{ S.nhap.len=Math.max(50,S.nhap.len+ +e.dataset.dl); ve(); });
+  on("[data-dq]",e=>{ S.nhap.qty=Math.max(1,S.nhap.qty+ +e.dataset.dq); ve(); });
+  const num=(id,k,min)=>{ const el=document.getElementById(id); if(!el) return;
+    el.onchange=()=>{ const v=parseFloat(el.value); S.nhap[k]=Number.isFinite(v)?Math.max(min,v):min; ve(); };
+    el.onkeydown=ev=>{ if(ev.key==="Enter"){ev.preventDefault(); el.blur();} }; };
+  num("iln","len",50); num("iqt","qty",1); num("iban","ban",0);
+  on("[data-ap]",e=>{ S.nhap.len=+e.dataset.ap; toast(`Đã đổi sang ${F(S.nhap.len)} mm`); });
+  on("[data-md]",e=>{ const m=S.moi.find(x=>x.id===e.dataset.md);
+    if(m&&!m.anh){ S.nhap.hm="Lan can"; S.nhap.vt="i4012"; S.nhap.len=1300; S.nhap.qty=14; S.nhap.ban=0; }
+    S.moi=S.moi.filter(x=>x.id!==e.dataset.md); S.xem=null; ve(); });
+  on("[data-gui]",()=>{ const g=tinh(); if(!g) return;
+    S.chat.push({ai:"xu",gio:gio(),loai:"bg",ma:"BG-"+(63+S.chat.filter(m=>m.loai==="bg").length),
+      hang:S.nhap.hm+" "+vt().ten, cay:g.p.soCay, qty:S.nhap.qty, len:S.nhap.len, tien:S.nhap.ban, ok:false});
+    toast("Đã gửi báo giá vào Zalo của khách"); });
+
+  /* --- đơn hàng & thu tiền --- */
+  on("[data-od]",e=>{ S.xem={k:"don",id:e.dataset.od}; ve(); document.getElementById("scr").scrollTop=0; });
+  on("[data-nod]",e=>{ S.xem={k:"no",id:e.dataset.nod}; ve(); document.getElementById("scr").scrollTop=0; });
+  on("[data-nt]",e=>{ const o=S.don.find(x=>x.id===e.dataset.nt); if(!o) return;
+    o.ct=true; if(o.cd<5) o.cd=5;
+    S.chat.push({ai:"xu",gio:gio(),loai:"ct",tien:no(o),tra:false});
+    toast("Đã làm đủ 3 giấy và gửi vào Zalo khách"); });
+  on("[data-nn]",e=>{ const o=S.don.find(x=>x.id===e.dataset.nn); if(!o) return;
+    const d=qh(o);
+    const t = d<=7 ? `Dạ anh ${o.kh.replace("Nhà thầu ","")} ơi, đơn ${o.hang} còn ${F(no(o))} đ. Khi nào tiện anh chuyển giúp em nhé.`
+            : d<=15 ? `Dạ anh ơi, em gửi lại bản đối chiếu công nợ đơn ${o.id}. Còn ${F(no(o))} đ, quá hạn ${d} ngày rồi ạ. Anh xem giúp em.`
+            : `Dạ anh ơi, đơn ${o.id} còn ${F(no(o))} đ, quá hạn ${d} ngày. Em gửi lại đủ ba giấy tờ. Anh thu xếp giúp em trong tuần này nhé.`;
+    S.chat.push({ai:"xu",gio:gio(),t}); toast("Đã gửi lời nhắc qua Zalo"); });
+  on("[data-dt]",e=>{ const o=S.don.find(x=>x.id===e.dataset.dt); if(!o) return;
+    o.thu=o.ban; o.han=0; S.xem=null; toast(`Đã ghi nhận ${esc(o.kh)} trả đủ`); });
+
+  /* --- chi phí --- */
+  on("[data-gc]",()=>{ const mo=document.getElementById("cmo").value.trim();
+    const t=parseFloat(document.getElementById("ctien").value), dn=document.getElementById("cdon").value;
+    if(!mo||!Number.isFinite(t)||t<=0){ toast("Nhập tên khoản chi và số tiền giúp em"); return; }
+    S.chi.unshift({ngay:"10/10",mo,tien:t,don:dn}); toast("Đã ghi vào sổ"); });
+
+  /* --- thợ --- */
+  const st=document.getElementById("stho"); if(st) st.onchange=()=>{ S.thoDon=st.value; ve(); };
+  on("[data-xong]",e=>{ const o=S.don.find(x=>x.id===e.dataset.xong); if(!o||o.cd>=5) return;
+    const xong=CD[o.cd]; o.cd++; S.thoDon=o.id; toast(`Đã báo xong “${xong}” kèm 1 ảnh`); });
+  on("[data-tc]",()=>toast("Đã báo tổ trưởng. Việc này không bị ghi là lỗi của anh."));
+
+  /* --- zalo khách --- */
+  on("[data-zg]",()=>{ const el=document.getElementById("zin"); const t=(el.value||"").trim(); if(!t) return;
+    S.chat.push({ai:"kh",gio:gio(),t});
+    S.moi.unshift({id:"ZL-"+(105+S.moi.length),kh:"Anh Tuấn",gio:gio(),t});
+    toast("Đã gửi. Xưởng sẽ thấy trong mục Báo giá."); });
+  on("[data-dy]",()=>{ const m=[...S.chat].reverse().find(x=>x.loai==="bg"); if(!m) return;
+    m.ok=true; S.chat.push({ai:"kh",gio:gio(),t:"Ok em, anh chốt giá đó. Làm giúp anh nhé."});
+    if(!S.don.some(o=>o.id==="DH-241"))
+      S.don.unshift({id:"DH-241",kh:"Anh Tuấn",hang:m.hang,ban:m.tien,von:Math.round(m.tien*.72),cd:1,thu:0,han:null});
+    toast("Đã đồng ý. Xưởng bắt đầu làm."); });
+  on("[data-tt]",()=>{ const m=[...S.chat].reverse().find(x=>x.loai==="ct"); if(!m) return;
+    m.tra=true; const o=S.don.find(x=>x.ct&&no(x)>0); if(o){o.thu=o.ban;o.han=0;}
+    S.chat.push({ai:"kh",gio:gio(),t:"Anh chuyển rồi em nhé, kiểm tra giúp anh."});
+    toast("Cảm ơn anh. Xưởng đã nhận được."); });
+}
+ve();
+</script></body></html>
