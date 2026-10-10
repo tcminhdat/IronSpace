@@ -1,0 +1,970 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Bàn Điều Hành IronSpace</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+/* Bàn làm việc của chủ xưởng: thanh mục trên, khu làm việc giữa, sổ chạy bên phải; dồn một cột ở màn hẹp */
+:root{
+  --bg:#f3f5f7; --panel:#ffffff; --panel-2:#eceff3; --line:#d4dae1;
+  --fg:#17202a; --fg-2:#5a6775; --fg-3:#8793a1;
+  --steel:#2b3440; --onsteel:#ffffff;
+  --spark:#c8500f; --spark-soft:#fdf0e8;
+  --ok:#17663f; --ok-soft:#e6f2ec; --warn:#9a5b00; --warn-soft:#fdf3e2; --bad:#a3221b; --bad-soft:#fbeae8;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --sans:"Be Vietnam Pro",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --r:10px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#13181e; --panel:#1b222b; --panel-2:#232b35; --line:#323c48;
+  --fg:#e8edf2; --fg-2:#a4b0bd; --fg-3:#7a8694;
+  --steel:#c9d3de; --onsteel:#13181e;
+  --spark:#ff8142; --spark-soft:#36230f;
+  --ok:#5fd199; --ok-soft:#14301f; --warn:#f0b457; --warn-soft:#352610; --bad:#ff8a7e; --bad-soft:#3a1816;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#13181e; --panel:#1b222b; --panel-2:#232b35; --line:#323c48;
+  --fg:#e8edf2; --fg-2:#a4b0bd; --fg-3:#7a8694;
+  --steel:#c9d3de; --onsteel:#13181e;
+  --spark:#ff8142; --spark-soft:#36230f;
+  --ok:#5fd199; --ok-soft:#14301f; --warn:#f0b457; --warn-soft:#352610; --bad:#ff8a7e; --bad-soft:#3a1816;
+  color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--sans);font-size:15px;line-height:1.55;margin:0}
+.wrap{max-width:1240px;margin:0 auto;padding-inline:16px;padding-block:18px 56px}
+h1,h2,h3{text-wrap:balance;margin:0}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+.top{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;justify-content:space-between}
+.brand{font-size:22px;font-weight:700;letter-spacing:-.015em}
+.brand span{color:var(--spark)}
+.tagline{color:var(--fg-2);font-size:13px;max-width:64ch}
+.badge{font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;
+  background:var(--spark-soft);color:var(--spark);border:1px solid color-mix(in srgb,var(--spark) 35%,transparent);
+  padding:4px 9px;border-radius:99px;white-space:nowrap}
+
+.rail{display:flex;gap:5px;overflow-x:auto;margin:16px 0 14px;padding-bottom:4px}
+.tab{flex:0 0 auto;border:1px solid var(--line);background:var(--panel);color:var(--fg-2);border-radius:99px;
+  padding:7px 14px;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;white-space:nowrap}
+.tab:hover{border-color:var(--fg-3)}
+.tab[aria-current="true"]{background:var(--steel);border-color:var(--steel);color:var(--onsteel);font-weight:600}
+.tab:focus-visible{outline:2px solid var(--spark);outline-offset:2px}
+.tab i{font-style:normal;font-family:var(--mono);font-size:11px;opacity:.65;margin-right:6px}
+
+.grid{display:grid;grid-template-columns:minmax(0,1fr) 296px;gap:16px;align-items:start}
+@media (max-width:900px){.grid{grid-template-columns:minmax(0,1fr)}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:18px}
+.card h2{font-size:17px;font-weight:650;letter-spacing:-.01em}
+.card .sub{color:var(--fg-2);font-size:13px;margin-top:3px}
+.stack{display:flex;flex-direction:column;gap:14px;min-width:0}
+
+label{display:block;font-size:12px;font-weight:600;color:var(--fg-2);margin-bottom:4px}
+input,textarea,select{width:100%;font-family:var(--sans);font-size:14px;color:var(--fg);background:var(--panel-2);
+  border:1px solid var(--line);border-radius:7px;padding:8px 10px}
+input.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+input:focus,textarea:focus,select:focus{outline:2px solid var(--spark);outline-offset:1px;border-color:transparent}
+textarea{resize:vertical;line-height:1.5}
+.btn{font-family:inherit;font-size:14px;font-weight:600;border-radius:8px;padding:9px 16px;cursor:pointer;
+  border:1px solid var(--steel);background:var(--steel);color:var(--onsteel)}
+.btn.alt{background:transparent;color:var(--fg);border-color:var(--line)}
+.btn.spark{background:var(--spark);border-color:var(--spark);color:#fff}
+.btn.sm{font-size:12.5px;padding:6px 11px}
+.btn:focus-visible{outline:2px solid var(--spark);outline-offset:2px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+.row>*{min-width:0}
+
+.phone{background:var(--panel-2);border:1px solid var(--line);border-radius:var(--r);padding:14px;display:flex;
+  flex-direction:column;gap:10px}
+.zhead{display:flex;align-items:center;gap:9px;font-size:12.5px;color:var(--fg-2);font-weight:600;
+  border-bottom:1px solid var(--line);padding-bottom:9px}
+.dot{width:26px;height:26px;border-radius:50%;background:var(--steel);color:var(--onsteel);display:grid;
+  place-items:center;font-size:11px;font-weight:700;flex:0 0 auto}
+.msg{background:var(--panel);border:1px solid var(--line);border-radius:4px 12px 12px 12px;padding:10px 12px;
+  font-size:14px;max-width:92%}
+.msg.me{align-self:flex-end;border-radius:12px 4px 12px 12px;background:var(--spark-soft);
+  border-color:color-mix(in srgb,var(--spark) 25%,transparent)}
+.draw{border:1px dashed var(--line);border-radius:8px;padding:10px;background:var(--panel);max-width:92%;margin:0}
+.draw figcaption{font-size:11.5px;color:var(--fg-3);margin-top:6px}
+
+.tw{overflow-x:auto;margin-top:12px}
+table{border-collapse:collapse;width:100%;font-size:13.5px;min-width:520px}
+th{text-align:left;font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--fg-3);
+  font-weight:600;padding:0 10px 7px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:middle}
+tr:last-child td{border-bottom:0}
+td.r,th.r{text-align:right}
+.pill{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;padding:3px 8px;
+  border-radius:99px;white-space:nowrap}
+.pill.ok{background:var(--ok-soft);color:var(--ok)}
+.pill.warn{background:var(--warn-soft);color:var(--warn)}
+.pill.bad{background:var(--bad-soft);color:var(--bad)}
+.pill.neu{background:var(--panel-2);color:var(--fg-2)}
+
+.bars{display:flex;flex-direction:column;gap:9px;margin-top:14px}
+.barrow{display:grid;grid-template-columns:52px minmax(0,1fr) 92px;gap:10px;align-items:center}
+.barlbl{font-family:var(--mono);font-size:11.5px;color:var(--fg-3)}
+.bar{display:flex;height:30px;border:1px solid var(--line);border-radius:5px;overflow:hidden;background:var(--panel-2)}
+.seg{display:grid;place-items:center;font-family:var(--mono);font-size:10.5px;font-weight:600;color:var(--onsteel);
+  background:var(--steel);border-right:2px solid var(--spark);overflow:hidden;white-space:nowrap}
+.seg:last-child{border-right:0}
+.seg.reuse{background:var(--ok)}
+.rest{background:repeating-linear-gradient(135deg,var(--bad-soft) 0 6px,transparent 6px 12px);
+  border-left:2px solid var(--bad);display:grid;place-items:center;font-family:var(--mono);font-size:10.5px;
+  color:var(--bad);font-weight:600;overflow:hidden;white-space:nowrap}
+.barend{font-family:var(--mono);font-size:11.5px;text-align:right;color:var(--fg-2)}
+
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(132px,1fr));gap:10px;margin-top:14px}
+.kpi{background:var(--panel-2);border:1px solid var(--line);border-radius:8px;padding:11px 13px}
+.kpi .k{font-size:11px;font-weight:600;color:var(--fg-3);text-transform:uppercase;letter-spacing:.05em}
+.kpi .v{font-family:var(--mono);font-size:25px;font-weight:600;letter-spacing:-.02em;margin-top:2px}
+.kpi .s{font-size:11.5px;color:var(--fg-3);margin-top:1px}
+.kpi.hot{background:var(--spark-soft);border-color:color-mix(in srgb,var(--spark) 32%,transparent)}
+.kpi.hot .v{color:var(--spark)}
+.kpi.good{background:var(--ok-soft);border-color:color-mix(in srgb,var(--ok) 32%,transparent)}
+.kpi.good .v{color:var(--ok)}
+.kpi.red{background:var(--bad-soft);border-color:color-mix(in srgb,var(--bad) 32%,transparent)}
+.kpi.red .v{color:var(--bad)}
+
+.tip{margin-top:14px;border:1px solid color-mix(in srgb,var(--spark) 40%,transparent);background:var(--spark-soft);
+  border-radius:var(--r);padding:14px}
+.tip h3{font-size:14.5px;color:var(--spark);font-weight:650}
+.tip p{margin:6px 0 0;font-size:13.5px;color:var(--fg)}
+.tip .btn{margin-top:11px}
+.tip.green{border-color:color-mix(in srgb,var(--ok) 40%,transparent);background:var(--ok-soft)}
+.tip.green h3{color:var(--ok)}
+.tip.grey{border-color:var(--line);background:var(--panel-2)}
+.tip.grey h3{color:var(--fg)}
+
+.ledger{position:sticky;top:calc(env(safe-area-inset-top,0px) + 12px)}
+.lrow{display:flex;justify-content:space-between;gap:10px;font-size:13px;padding:6px 0;border-bottom:1px dashed var(--line)}
+.lrow:last-of-type{border-bottom:0}
+.lrow b{font-family:var(--mono);font-variant-numeric:tabular-nums;font-weight:600}
+.lsum{display:flex;justify-content:space-between;gap:10px;margin-top:9px;padding-top:9px;border-top:2px solid var(--fg);
+  font-weight:700;font-size:14.5px}
+.lsum b{font-family:var(--mono)}
+.log{margin-top:10px;font-size:12px;color:var(--fg-2);display:flex;flex-direction:column;gap:5px;
+  max-height:200px;overflow-y:auto}
+.log div{border-left:2px solid var(--line);padding-left:8px}
+.log time{font-family:var(--mono);color:var(--fg-3);font-size:11px}
+
+.meter{height:9px;border-radius:99px;background:var(--panel-2);overflow:hidden;margin-top:7px;border:1px solid var(--line)}
+.meter i{display:block;height:100%}
+.note{font-size:12px;color:var(--fg-3);margin-top:10px;line-height:1.5}
+.sec-h{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--fg-3);margin:18px 0 8px}
+.hr{height:1px;background:var(--line);margin:16px 0}
+ul.tick{margin:8px 0 0;padding-left:18px;font-size:13.5px;color:var(--fg-2)}
+ul.tick li{margin-bottom:4px}
+
+/* chuỗi công đoạn */
+.flow{display:flex;gap:4px;flex-wrap:wrap;margin-top:6px}
+.fstep{font-size:11px;padding:3px 9px;border-radius:99px;background:var(--panel-2);color:var(--fg-3);
+  border:1px solid var(--line);white-space:nowrap}
+.fstep.done{background:var(--ok-soft);color:var(--ok);border-color:color-mix(in srgb,var(--ok) 30%,transparent)}
+.fstep.now{background:var(--spark);color:#fff;border-color:var(--spark);font-weight:600}
+.sw{display:inline-flex;align-items:center;gap:7px;font-size:13px;color:var(--fg-2);cursor:pointer}
+.sw input{width:auto;margin:0}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <div class="brand">Iron<span>Space</span></div>
+      <p class="tagline">Lớp điều hành biết dòng tiền cho xưởng cơ khí – inox làm hàng theo đơn. Bản chạy thử mở trong trình duyệt, không cài gì.</p>
+    </div>
+    <span class="badge">Prototype · GenD Arena 2026</span>
+  </header>
+  <nav class="rail" id="rail" aria-label="Các màn hình"></nav>
+  <div class="grid">
+    <div class="stack" id="main"></div>
+    <aside class="stack">
+      <div class="card ledger">
+        <h2 id="asideTitle">Sổ đơn hàng</h2>
+        <p class="sub" id="asideSub"></p>
+        <div id="asideBody" style="margin-top:12px"></div>
+        <div class="sec-h" style="margin-bottom:6px">Nhật ký phê duyệt</div>
+        <div class="log" id="log"></div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<script>
+"use strict";
+/* ========================= HẰNG SỐ & TIỆN ÍCH ========================= */
+const F  = n => new Intl.NumberFormat("vi-VN").format(Math.round(n));
+const F2 = (n,d=2) => Number(n).toLocaleString("vi-VN",{minimumFractionDigits:d,maximumFractionDigits:d});
+const FP = n => n < 1 ? F2(n,4) : F2(n,2);
+const Ftr= n => F2(n/1e6,1) + " tr";
+const esc= s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+
+/* ========================= TRẠNG THÁI ========================= */
+const CONG_DOAN = ["Nhận đơn","Cắt","Hàn","Mài & đánh bóng","Lắp đặt","Nghiệm thu"];
+
+const S = {
+  tab: "tongquan", step: 0,
+  msg: "Em ơi báo giá giúp anh cái cổng 2 cánh với. Khung bằng inox 304 hộp 50x50 dày 1ly2, anh cần 12 thanh dài 1500mm. Làm xong trong tuần nhé.",
+  parsed: null,
+  bar: 6000, kerf: 2.5,
+  parts: [{ label:"Thanh khung đứng", len:1500, qty:12 }],
+  kg: 11.15, dkg: 65000,
+  gioCong: 6, dGio: 60000, moiHan: 28, gioMay: 3.5,
+  rDa: 15000, nhatMoiDa: 40, rQue: 1375, rKhi: 2000, rDien: 1500,
+  giaBan: 3900000,
+  anGiaVon: true,            // phân quyền: ẩn giá vốn khỏi thợ
+  log: [],
+
+  /* sổ đơn hàng — dữ liệu mẫu, đúng dải ICP 12–30 đơn/tháng, 210–350 triệu/tháng */
+  orders: [
+    { id:"DH-238", khach:"Chị Hoa",            hang:"Lan can ban công",   ban: 8400000,  von: 5630000,  cd:2, giao:null, thu:0,        han:null },
+    { id:"DH-237", khach:"Anh Dũng",           hang:"Cầu thang xoắn",     ban:24500000,  von:17100000,  cd:1, giao:null, thu:8000000,  han:null },
+    { id:"DH-236", khach:"Anh Phúc",           hang:"Khung kính mặt tiền",ban:12900000,  von: 9050000,  cd:3, giao:null, thu:4000000,  han:null },
+    { id:"DH-235", khach:"Nhà thầu Minh Phát", hang:"Khung mái che",      ban:31200000,  von:21400000,  cd:5, giao:-18,  thu:10000000, han:-18 },
+    { id:"DH-233", khach:"Anh Bình",           hang:"Cửa sổ sắt 12 bộ",   ban:14600000,  von:10350000,  cd:5, giao:-42,  thu:0,        han:-42 },
+    { id:"DH-230", khach:"Chị Lan",            hang:"Hàng rào inox",      ban: 9800000,  von: 6700000,  cd:5, giao:-5,   thu:3000000,  han:-5  },
+    { id:"DH-228", khach:"Nhà thầu Đại Tín",   hang:"Lan can 3 tầng",     ban:46000000,  von:32200000,  cd:5, giao:-61,  thu:46000000, han:0   },
+    { id:"DH-225", khach:"Anh Sơn",            hang:"Cổng xếp",           ban:17300000,  von:12100000,  cd:5, giao:-74,  thu:17300000, han:0   },
+    { id:"DH-222", khach:"Chị Yến",            hang:"Mái hiên",           ban: 7500000,  von: 5200000,  cd:5, giao:-88,  thu:7500000,  han:0   }
+  ],
+  /* kho phôi dư — đoạn thừa còn dùng được từ các đơn trước */
+  offcuts: [
+    { len:1495, qty:4, tu:"DH-237" },
+    { len:2010, qty:2, tu:"DH-233" },
+    { len:1200, qty:3, tu:"DH-235" },
+    { len: 880, qty:6, tu:"DH-230" },
+    { len: 640, qty:5, tu:"DH-228" }
+  ],
+  /* vòng học định mức — ước tính so với thực tế, đơn cũ trước */
+  lichSu: [
+    { don:"DH-222", uoc:8.0, thuc:9.4 },
+    { don:"DH-225", uoc:8.5, thuc:9.1 },
+    { don:"DH-228", uoc:9.0, thuc:9.3 },
+    { don:"DH-230", uoc:9.2, thuc:8.8 },
+    { don:"DH-233", uoc:9.0, thuc:9.2 }
+  ],
+  /* đo lường tác động — SỐ MẪU để minh hoạ cách tính, chưa phải kết quả thật */
+  did: [
+    { ten:"Số ngày thu tiền bình quân",            dv:"ngày",      tTruoc:47,   tSau:34,   cTruoc:45,   cSau:44,   tot:"giảm" },
+    { ten:"Tỷ lệ đơn báo giá dưới giá vốn",        dv:"%",         tTruoc:11,   tSau:4,    cTruoc:10,   cSau:9,    tot:"giảm" },
+    { ten:"Kg vật tư trên mỗi triệu đồng doanh thu",dv:"kg/triệu", tTruoc:3.10, tSau:2.74, cTruoc:3.05, cSau:3.02, tot:"giảm" }
+  ]
+};
+function note(t){ const d=new Date();
+  S.log.unshift({ t:`${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`, m:t }); }
+
+/* ========================= BÓC TÁCH CHỮ (thật) ========================= */
+function parseSpec(text){
+  const t = " " + text.toLowerCase().replace(/[,;]/g," ") + " ";
+  const f = {}, put=(k,v,c,how)=>{ f[k]={v,c,how}; };
+  let m;
+  if ((m = t.match(/\b(inox|i-?nox)\s*(304|201|316|430)\b/)))      put("vatLieu","Inox "+m[2],.98,"khớp mác thép trong câu");
+  else if ((m = t.match(/\b(inox|i-?nox)\b/)))                      put("vatLieu","Inox 304",.55,"có chữ inox, mác thép suy đoán theo mặc định xưởng");
+  else if ((m = t.match(/\b(sắt|thép)\s*(hộp|ống|tấm)?\b/)))        put("vatLieu","Thép "+(m[2]||"hộp"),.72,"khớp từ vật liệu, chưa rõ mác");
+  if (/\bhộp\b/.test(t))      put("dang","Hộp",.95,"khớp từ dạng mặt cắt");
+  else if (/\bống\b/.test(t)) put("dang","Ống tròn",.95,"khớp từ dạng mặt cắt");
+  else if (/\btấm\b/.test(t)) put("dang","Tấm",.95,"khớp từ dạng mặt cắt");
+  if ((m = t.match(/(\d{2,3})\s*[x×]\s*(\d{2,3})(?!\d)/)))          put("tietDien",`${m[1]}×${m[2]} mm`,.97,"khớp mẫu số×số");
+  if ((m = t.match(/(\d)\s*ly\s*(\d)/)))                            put("day",`${m[1]},${m[2]} mm`,.96,"khớp cách nói ly của thợ");
+  else if ((m = t.match(/d[àa]y\s*([\d.,]+)\s*(?:ly|mm)?/)))        put("day",String(m[1]).replace(".",",")+" mm",.9,"khớp sau chữ dày");
+  if ((m = t.match(/(\d{3,5})\s*mm/)))                              put("chieuDai",+m[1],.97,"khớp số kèm đơn vị mm");
+  else if ((m = t.match(/d[àa]i\s*([\d.,]+)\s*m\b/)))               put("chieuDai",Math.round(parseFloat(String(m[1]).replace(",","."))*1000),.88,"khớp số kèm đơn vị mét");
+  if ((m = t.match(/(\d{1,3})\s*(thanh|c[âa]y|c[áa]i|chi ti[ếe]t|b[ộo])/))) put("soLuong",+m[1],.95,"khớp số kèm đơn vị đếm");
+  if (/cổng/.test(t))                 put("hangMuc","Cổng",.9,"khớp tên sản phẩm");
+  else if (/lan can|ban công/.test(t))put("hangMuc","Lan can",.9,"khớp tên sản phẩm");
+  else if (/cầu thang/.test(t))       put("hangMuc","Cầu thang",.9,"khớp tên sản phẩm");
+  ["hangMuc","vatLieu","dang","tietDien","day","chieuDai","soLuong"].forEach(k=>{
+    if (!f[k]) f[k] = { v:null, c:0, how:"không tìm thấy trong tin nhắn" }; });
+  return f;
+}
+const FIELD_VN = { hangMuc:"Hạng mục", vatLieu:"Vật liệu", dang:"Dạng mặt cắt", tietDien:"Tiết diện",
+  day:"Độ dày", chieuDai:"Chiều dài chi tiết", soLuong:"Số lượng" };
+const NGUONG = 0.85;
+
+/* ========================= XẾP PHÔI (thật) ========================= */
+function pack(parts, barLen, kerf){
+  const items=[]; parts.forEach(p=>{ for(let i=0;i<p.qty;i++) items.push({len:p.len,label:p.label}); });
+  items.sort((a,b)=>b.len-a.len);
+  if (items.some(i=>i.len>barLen)) return null;
+  const bars=[];
+  for (const it of items){
+    let placed=false;
+    for (const b of bars){ const need=b.items.length?kerf+it.len:it.len;
+      if (b.used+need<=barLen+1e-9){ b.used+=need; b.items.push(it); placed=true; break; } }
+    if (!placed) bars.push({ used:it.len, items:[it] });
+  }
+  return bars;
+}
+function plan(parts, barLen, kerf){
+  const bars = pack(parts, barLen, kerf); if (!bars) return null;
+  const netMm=parts.reduce((s,p)=>s+p.len*p.qty,0), grossMm=bars.length*barLen;
+  const kerfMm=bars.reduce((s,b)=>s+(b.items.length-1)*kerf,0);
+  return { bars, soCay:bars.length, netMm, grossMm, kerfMm,
+    dauMauMm:grossMm-netMm-kerfMm, haoPct:(grossMm-netMm)/grossMm*100,
+    soNhat:bars.reduce((s,b)=>s+Math.max(0,b.items.length-1),0),
+    duPhongMin:Math.min(...bars.map(b=>barLen-b.used)) };
+}
+/* Lùi ít milimét nhất mà vẫn bớt được cây — và vẫn chạy khi cây giao về ngắn hơn DU_PHONG mm */
+const DU_PHONG = 10;
+function timLui(parts, barLen, kerf, maxLui=30, duPhong=DU_PHONG){
+  const goc = plan(parts, barLen, kerf); if (!goc) return null;
+  for (let d=1; d<=maxLui; d++)
+    for (let idx=0; idx<parts.length; idx++){
+      if (parts[idx].len-d <= 0) continue;
+      const thu = parts.map((q,i)=> i===idx ? {...q,len:q.len-d} : {...q});
+      const r = plan(thu, barLen, kerf);
+      if (r && r.soCay<goc.soCay && r.duPhongMin>=duPhong)
+        return { idx, lui:d, lenMoi:thu[idx].len, r, duPhong };
+    }
+  return null;
+}
+/* ========================= GHÉP PHÔI DƯ (thật) ========================= */
+function ghepPhoiDu(offcuts, need, kerf){
+  const pieces=[]; offcuts.forEach(o=>{ for(let i=0;i<o.qty;i++) pieces.push({len:o.len,tu:o.tu}); });
+  pieces.sort((a,b)=>b.len-a.len);
+  let conLai = need.qty; const dung=[];
+  for (const p of pieces){
+    if (conLai<=0) break;
+    const fit = Math.floor((p.len + kerf) / (need.len + kerf));
+    if (fit < 1) continue;
+    const lay = Math.min(fit, conLai); conLai -= lay;
+    dung.push({ len:p.len, lay, tu:p.tu, thua: p.len - (lay*need.len + (lay-1)*kerf) });
+  }
+  return { tuPhoiDu: need.qty - conLai, conThieu: conLai, dung };
+}
+/* ========================= VÒNG HỌC ĐỊNH MỨC (thật) ========================= */
+function hocDinhMuc(lichSu){
+  if (!lichSu.length) return null;
+  let tong=0, tongW=0, lech=0;
+  lichSu.forEach((h,i)=>{ const w=i+1; tong += h.thuc*w; tongW += w; lech += h.thuc-h.uoc; });
+  return { moi: tong/tongW, lechTB: lech/lichSu.length,
+           lechCuoi: lichSu[lichSu.length-1].thuc - lichSu[lichSu.length-1].uoc };
+}
+/* ========================= CÔNG NỢ ========================= */
+function tang(d){            // d = số ngày quá hạn (dương là đã quá hạn)
+  if (d <= 0)  return { t:"Chưa đến hạn",                       c:"neu"  };
+  if (d <= 7)  return { t:"Nhắc nhẹ qua Zalo",                  c:"ok"   };
+  if (d <= 15) return { t:"Gửi biên bản đối chiếu công nợ",     c:"warn" };
+  if (d <= 30) return { t:"Gọi điện, gửi lại đủ ba chứng từ",   c:"warn" };
+  return             { t:"Dừng nhận đơn mới từ khách này",      c:"bad"  };
+}
+const quaHan = o => o.han === null ? 0 : Math.max(0, -o.han);
+const conNo  = o => Math.max(0, o.ban - o.thu);
+
+/* ========================= GIÁ THÀNH (thật) ========================= */
+function tinhGia(){
+  const p = plan(S.parts, S.bar, S.kerf); if (!p) return null;
+  const dCay=S.kg*S.dkg, vatTu=p.soCay*dCay, nhanCong=S.gioCong*S.dGio;
+  const da=Math.ceil(p.soNhat/S.nhatMoiDa)*S.rDa, que=S.moiHan*S.rQue,
+        khi=S.moiHan*S.rKhi, dien=S.gioMay*S.rDien;
+  const an=da+que+khi+dien, tong=vatTu+nhanCong+an, bien=S.giaBan-tong;
+  return { p,dCay,vatTu,nhanCong,da,que,khi,dien,an,tong,bien,
+           bienPct: S.giaBan>0 ? bien/S.giaBan*100 : 0 };
+}
+
+/* ========================= GIAO DIỆN ========================= */
+const TABS = [
+  ["tongquan","Tổng quan"], ["baogia","Báo giá"], ["xuong","Xưởng đang làm"],
+  ["congno","Công nợ"], ["phoidu","Kho phôi dư"], ["dinhmuc","Vòng học định mức"],
+  ["dolường","Đo lường tác động"], ["congnghe","Công nghệ & giới hạn"]
+];
+const STEPS = ["Nhận yêu cầu","Bản nháp AI","Người rà soát","Tối ưu cắt phôi","Giá thành","Gửi báo giá"];
+
+function drawRail(){
+  document.getElementById("rail").innerHTML = TABS.map(([k,l],i)=>
+    `<button class="tab" data-k="${k}" aria-current="${k===S.tab}"><i>${i+1}</i>${esc(l)}</button>`).join("");
+  document.querySelectorAll(".tab").forEach(b=> b.onclick = ()=>{
+    S.tab=b.dataset.k; render(); window.scrollTo({top:0,behavior:"smooth"}); });
+}
+function barHTML(p,hl){
+  return `<div class="bars">${p.bars.map((b,i)=>{
+    const rest=S.bar-b.used;
+    const segs=b.items.map(it=>`<div class="seg${hl?" reuse":""}" style="flex:0 0 ${(it.len/S.bar*100).toFixed(3)}%">${F(it.len)}</div>`).join("");
+    const r=rest>0.5?`<div class="rest" style="flex:0 0 ${(rest/S.bar*100).toFixed(3)}%">${F(rest)}</div>`:"";
+    return `<div class="barrow"><span class="barlbl">Cây ${i+1}</span><div class="bar">${segs}${r}</div>
+      <span class="barend">bỏ ${F(rest)} mm</span></div>`;}).join("")}</div>
+  <p class="note">Mỗi thanh là một cây ${F(S.bar)} mm. Vạch cam là mạch cắt ${F2(S.kerf,1)} mm, vẽ phóng đại cho nhìn thấy vì ở tỷ lệ thật nó chỉ rộng bằng 0,04% cây. Phần gạch chéo đỏ là đầu mẩu bỏ đi.</p>`;
+}
+
+/* ---------- cột phải ---------- */
+function drawAside(){
+  const T=document.getElementById("asideTitle"), U=document.getElementById("asideSub"), B=document.getElementById("asideBody");
+  if (S.tab==="baogia"){
+    const g=tinhGia();
+    T.textContent="Đơn đang báo giá";
+    U.textContent = S.parsed && S.parsed.hangMuc.v ? `${S.parsed.hangMuc.v} — khách Zalo` : "Đơn mẫu — cổng inox 304";
+    B.innerHTML = g ? `
+      <div class="lrow"><span>Số cây thép</span><b>${F(g.p.soCay)}</b></div>
+      <div class="lrow"><span>Hao hụt</span><b>${FP(g.p.haoPct)} %</b></div>
+      <div class="lrow"><span>Vật tư</span><b>${F(g.vatTu)} đ</b></div>
+      <div class="lrow"><span>Nhân công</span><b>${F(g.nhanCong)} đ</b></div>
+      <div class="lrow"><span>Chi phí ẩn</span><b>${F(g.an)} đ</b></div>
+      <div class="lsum"><span>Giá vốn</span><b>${F(g.tong)} đ</b></div>
+      <div class="lrow" style="margin-top:8px"><span>Giá bán</span><b>${F(S.giaBan)} đ</b></div>
+      <div class="lrow"><span>Biên</span><b style="color:${g.bienPct<15?"var(--bad)":"var(--ok)"}">${F2(g.bienPct,1)} %</b></div>` : "";
+  } else {
+    const dangLam=S.orders.filter(o=>o.cd<5), phaiThu=S.orders.reduce((s,o)=>s+conNo(o),0);
+    const quaHanTien=S.orders.filter(o=>quaHan(o)>0).reduce((s,o)=>s+conNo(o),0);
+    const doanhThu=S.orders.reduce((s,o)=>s+o.ban,0), gv=S.orders.reduce((s,o)=>s+o.von,0);
+    T.textContent="Sổ xưởng";
+    U.textContent=`${S.orders.length} đơn trong kỳ`;
+    B.innerHTML=`
+      <div class="lrow"><span>Đơn đang làm</span><b>${dangLam.length}</b></div>
+      <div class="lrow"><span>Doanh thu kỳ</span><b>${Ftr(doanhThu)}</b></div>
+      <div class="lrow"><span>Giá vốn kỳ</span><b>${Ftr(gv)}</b></div>
+      <div class="lrow"><span>Biên bình quân</span><b style="color:var(--ok)">${F2((doanhThu-gv)/doanhThu*100,1)} %</b></div>
+      <div class="lsum"><span>Còn phải thu</span><b>${Ftr(phaiThu)}</b></div>
+      <div class="lrow"><span>Trong đó quá hạn</span><b style="color:var(--bad)">${Ftr(quaHanTien)}</b></div>
+      <div class="lrow"><span>Phôi dư trong kho</span><b>${S.offcuts.reduce((s,o)=>s+o.qty,0)} đoạn</b></div>`;
+  }
+  document.getElementById("log").innerHTML = S.log.length
+    ? S.log.map(l=>`<div><time>${l.t}</time> ${esc(l.m)}</div>`).join("")
+    : `<div style="color:var(--fg-3)">Chưa có thao tác nào được ghi.</div>`;
+}
+
+/* ========================= CÁC MÀN HÌNH ========================= */
+function viewTongQuan(){
+  const dangLam=S.orders.filter(o=>o.cd<5);
+  const phaiThu=S.orders.reduce((s,o)=>s+conNo(o),0);
+  const qh=S.orders.filter(o=>quaHan(o)>0);
+  const qhTien=qh.reduce((s,o)=>s+conNo(o),0);
+  const dt=S.orders.reduce((s,o)=>s+o.ban,0), gv=S.orders.reduce((s,o)=>s+o.von,0);
+  const mong=S.orders.filter(o=>(o.ban-o.von)/o.ban*100 < 15);
+  const dm=hocDinhMuc(S.lichSu);
+  return `<div class="card">
+    <h2>Sáng nay xưởng đang ở đâu</h2>
+    <p class="sub">Bốn con số chủ xưởng cần biết trước khi mở cửa, lấy thẳng từ sổ đơn hàng bên phải.</p>
+    <div class="kpis">
+      <div class="kpi"><div class="k">Đơn đang làm</div><div class="v">${dangLam.length}</div>
+        <div class="s">trên tổng ${S.orders.length} đơn trong kỳ</div></div>
+      <div class="kpi ${qhTien>0?"red":"good"}"><div class="k">Tiền quá hạn chưa thu</div>
+        <div class="v" style="font-size:21px">${Ftr(qhTien)}</div><div class="s">${qh.length} khách</div></div>
+      <div class="kpi"><div class="k">Tổng còn phải thu</div>
+        <div class="v" style="font-size:21px">${Ftr(phaiThu)}</div><div class="s">gồm cả chưa đến hạn</div></div>
+      <div class="kpi good"><div class="k">Biên bình quân</div>
+        <div class="v">${F2((dt-gv)/dt*100,1)}%</div><div class="s">${Ftr(dt)} doanh thu kỳ</div></div>
+    </div>
+    ${mong.length ? `<div class="tip"><h3>${mong.length} đơn có biên dưới 15%</h3>
+      <p>${mong.map(o=>`<b>${o.id}</b> ${esc(o.hang)} — biên ${F2((o.ban-o.von)/o.ban*100,1)}%`).join(" · ")}.
+      Giá thép đã điều chỉnh 5 đợt từ đầu 2026, mỗi đợt 300.000 đến 600.000 đồng một tấn, nên đơn báo giá từ tuần trước có thể đã mỏng hơn lúc gửi.</p></div>`
+      : `<div class="tip green"><h3>Không đơn nào biên dưới 15%</h3><p>Toàn bộ đơn trong kỳ đều trên ngưỡng xưởng tự đặt.</p></div>`}
+    <div class="sec-h">Việc cần làm hôm nay</div>
+    <div class="tw"><table><thead><tr><th>Việc</th><th>Đơn</th><th>Vì sao</th><th class="r">Số tiền</th></tr></thead><tbody>
+      ${qh.sort((a,b)=>quaHan(b)-quaHan(a)).map(o=>{const t=tang(quaHan(o));
+        return `<tr><td><span class="pill ${t.c}">${esc(t.t)}</span></td>
+        <td><b>${o.id}</b><br><span style="color:var(--fg-2);font-size:12.5px">${esc(o.khach)}</span></td>
+        <td style="color:var(--fg-2);font-size:12.5px">Quá hạn ${quaHan(o)} ngày</td>
+        <td class="r num">${F(conNo(o))} đ</td></tr>`;}).join("")}
+      <tr><td><span class="pill neu">Cập nhật công đoạn</span></td><td colspan="2" style="color:var(--fg-2);font-size:12.5px">${dangLam.length} đơn đang chạy, thợ cập nhật bằng ảnh</td><td class="r">—</td></tr>
+      <tr><td><span class="pill ok">Định mức đã học</span></td><td colspan="2" style="color:var(--fg-2);font-size:12.5px">Hao hụt dự tính cho đơn tới: ${F2(dm.moi,2)}% — học từ ${S.lichSu.length} đơn gần nhất</td><td class="r">—</td></tr>
+    </tbody></table></div>
+    <p class="note">Toàn bộ số trên màn hình này tính ra từ sổ đơn hàng mẫu, không gán sẵn. Sửa một đơn ở màn Công nợ thì các con số ở đây đổi theo.</p>
+  </div>`;
+}
+
+function viewXuong(){
+  const dangLam=S.orders.filter(o=>o.cd<5);
+  return `<div class="card">
+    <h2>Xưởng đang làm tới đâu</h2>
+    <p class="sub">Chủ xưởng không phải đi ra xưởng hỏi. Thợ cập nhật bằng chụp ảnh thay vì gõ, vì gõ là thứ thợ sẽ không làm.</p>
+    <div class="tw"><table><thead><tr><th>Đơn</th><th>Chuỗi công đoạn</th><th class="r">Giá trị</th></tr></thead><tbody>
+    ${dangLam.map(o=>`<tr>
+      <td><b>${o.id}</b><br><span style="color:var(--fg-2);font-size:12.5px">${esc(o.khach)} — ${esc(o.hang)}</span></td>
+      <td><div class="flow">${CONG_DOAN.map((c,i)=>
+        `<span class="fstep ${i<o.cd?"done":i===o.cd?"now":""}">${esc(c)}</span>`).join("")}</div>
+        <div style="margin-top:7px"><button class="btn alt sm" data-adv="${o.id}">Thợ báo xong “${esc(CONG_DOAN[o.cd])}”</button></div></td>
+      <td class="r num">${F(o.ban)} đ</td></tr>`).join("")}
+    </tbody></table></div>
+    <div class="sec-h">Ba cam kết cứng về dữ liệu thợ</div>
+    <ul class="tick">
+      <li>Không chấm điểm thợ. Hệ thống ghi công đoạn xong hay chưa, không xếp hạng ai nhanh ai chậm.</li>
+      <li>Không dùng dữ liệu thợ để kỷ luật tự động. Mọi quyết định về người đều do người ra.</li>
+      <li>Thợ từ chối xử lý tự động thì phải có đường làm việc thay thế, và việc từ chối không được dùng làm căn cứ kỷ luật — Điều 10 khoản 3 Nghị định 356/2025.</li>
+    </ul>
+    <div class="hr"></div>
+    <div class="sec-h">Phân quyền — thử bật tắt</div>
+    <label class="sw"><input type="checkbox" id="swq" ${S.anGiaVon?"checked":""}> Ẩn giá vốn và biên lợi nhuận khỏi màn hình của thợ</label>
+    <div class="tw"><table><thead><tr><th>Trường</th><th>Chủ xưởng thấy</th><th>Người giữ sổ thấy</th><th>Thợ thấy</th></tr></thead><tbody>
+      <tr><td>Công đoạn và hạn giao</td><td><span class="pill ok">Có</span></td><td><span class="pill ok">Có</span></td><td><span class="pill ok">Có</span></td></tr>
+      <tr><td>Định mức vật tư của đơn</td><td><span class="pill ok">Có</span></td><td><span class="pill ok">Có</span></td><td><span class="pill ok">Có</span></td></tr>
+      <tr><td><b>Giá vốn và biên lợi nhuận</b></td><td><span class="pill ok">Có</span></td><td><span class="pill ok">Có</span></td>
+          <td>${S.anGiaVon?'<span class="pill bad">Ẩn</span>':'<span class="pill warn">Đang hiện</span>'}</td></tr>
+      <tr><td>Công nợ của khách</td><td><span class="pill ok">Có</span></td><td><span class="pill ok">Có</span></td><td><span class="pill bad">Ẩn</span></td></tr>
+    </tbody></table></div>
+    <p class="note">Giấu giá vốn khỏi thợ không phải để che giấu, mà vì thợ không cần con số đó để làm việc, và vì một hệ thống đọc được biên lợi nhuận từ tài khoản của thợ là một rủi ro không cần thiết.</p>
+  </div>`;
+}
+
+function viewCongNo(){
+  const co=S.orders.filter(o=>conNo(o)>0).sort((a,b)=>quaHan(b)-quaHan(a));
+  const tong=co.reduce((s,o)=>s+conNo(o),0);
+  const qh=co.filter(o=>quaHan(o)>0), qhT=qh.reduce((s,o)=>s+conNo(o),0);
+  const tbNgay = qh.length ? qh.reduce((s,o)=>s+quaHan(o),0)/qh.length : 0;
+  return `<div class="card">
+    <h2>Sổ công nợ</h2>
+    <p class="sub">Vấn đề số một của xưởng: làm xong rồi đợi tiền, trong khi vẫn phải trả vật tư và lương thợ. Nợ đòi không được thường vì thiếu giấy tờ, không phải vì khách xấu.</p>
+    <div class="kpis">
+      <div class="kpi"><div class="k">Còn phải thu</div><div class="v" style="font-size:21px">${Ftr(tong)}</div><div class="s">${co.length} đơn</div></div>
+      <div class="kpi red"><div class="k">Đã quá hạn</div><div class="v" style="font-size:21px">${Ftr(qhT)}</div><div class="s">${qh.length} khách</div></div>
+      <div class="kpi"><div class="k">Quá hạn bình quân</div><div class="v">${F2(tbNgay,0)}<span style="font-size:13px"> ngày</span></div></div>
+    </div>
+    <div class="tw"><table><thead><tr><th>Đơn</th><th class="r">Còn nợ</th><th class="r">Quá hạn</th><th>Việc hệ thống nhắc</th><th>Chứng từ</th></tr></thead><tbody>
+    ${co.map(o=>{const d=quaHan(o), t=tang(d), ct=o.cd>=5;
+      return `<tr><td><b>${o.id}</b><br><span style="color:var(--fg-2);font-size:12.5px">${esc(o.khach)}</span></td>
+      <td class="r num">${F(conNo(o))} đ</td>
+      <td class="r num" style="color:${d>30?"var(--bad)":d>0?"var(--warn)":"var(--fg-2)"}">${d>0?d+" ngày":"—"}</td>
+      <td><span class="pill ${t.c}">${esc(t.t)}</span></td>
+      <td>${ct?'<span class="pill ok">Đủ ba</span>':`<button class="btn spark sm" data-nt="${o.id}">Nghiệm thu một chạm</button>`}</td></tr>`;}).join("")}
+    </tbody></table></div>
+    <div class="sec-h">Nghiệm thu một chạm sinh đúng ba chứng từ</div>
+    <p style="font-size:13.5px;color:var(--fg-2);margin:0">Khảo sát hơn 2.000 doanh nghiệp của Hiệp hội Nhà thầu Xây dựng Việt Nam cho thấy ba lỗi hồ sơ phổ biến nhất khiến nhà thầu nhỏ không thu hồi được nợ là thiếu đúng ba thứ này. Phần mềm khác coi nghiệm thu là một trạng thái đơn hàng; IronSpace coi nó là thời điểm sinh ra chứng từ.</p>
+    <div class="tw"><table><thead><tr><th>Chứng từ</th><th>Sinh ra từ đâu</th><th>Vì sao cần</th></tr></thead><tbody>
+      <tr><td><b>Biên bản nghiệm thu</b></td><td style="color:var(--fg-2);font-size:12.5px">Khách bấm xác nhận ngay trong Zalo, không cài gì</td><td style="color:var(--fg-2);font-size:12.5px">Mốc pháp lý xác định công việc đã hoàn thành</td></tr>
+      <tr><td><b>Xác nhận khối lượng</b></td><td style="color:var(--fg-2);font-size:12.5px">Lấy từ định mức vật tư đã chốt lúc báo giá</td><td style="color:var(--fg-2);font-size:12.5px">Chặn tranh cãi “làm ít hơn hợp đồng”</td></tr>
+      <tr><td><b>Biên bản đối chiếu công nợ</b></td><td style="color:var(--fg-2);font-size:12.5px">Sổ cái giao dịch, cộng các lần đã thu</td><td style="color:var(--fg-2);font-size:12.5px">Giấy tờ bắt buộc nếu phải đòi qua bên thứ ba</td></tr>
+    </tbody></table></div>
+    <div class="tip grey"><h3>Nhắc thu tiền trước khi nhắc trả phí</h3>
+      <p>Hệ thống phải giúp xưởng thu được tiền của khách trước, rồi mới nhắc xưởng trả phí IronSpace. Chi phí của nguyên tắc này bằng chữ — chỉ cần viết vào thiết kế lịch nhắc — nhưng nó vô hiệu hoá đúng phản đối mạnh nhất: “tháng này nhà thầu chưa trả 100 triệu, thôi tắt phần mềm cũng được”.</p></div>
+    <p class="note">Mã VietQR trỏ thẳng tài khoản xưởng. IronSpace không chạm vào dòng tiền — Nghị định 52/2024 Điều 8 khoản 10 cấm uỷ thác hoặc làm đại lý trung gian thanh toán, ngưỡng vốn để được cấp phép là 50 tỷ đồng.</p>
+  </div>`;
+}
+
+function viewPhoiDu(){
+  const need = { len:S.parts[0].len, qty:S.parts[0].qty };
+  const g = ghepPhoiDu(S.offcuts, need, S.kerf);
+  const p = plan(S.parts, S.bar, S.kerf);
+  const conLai = { ...S.parts[0], qty: g.conThieu };
+  const pMoi = g.conThieu>0 ? plan([conLai], S.bar, S.kerf) : null;
+  const dCay = S.kg*S.dkg;
+  const tietKiem = p ? (p.soCay - (pMoi?pMoi.soCay:0)) * dCay : 0;
+  const tongDoan = S.offcuts.reduce((s,o)=>s+o.qty,0);
+  const tongMm = S.offcuts.reduce((s,o)=>s+o.qty*o.len,0);
+  return `<div class="card">
+    <h2>Kho phôi dư</h2>
+    <p class="sub">Đoạn thừa của đơn trước là vật tư đã trả tiền rồi. Vấn đề không phải nó không dùng được, mà là không ai nhìn thấy nó khi báo giá đơn sau.</p>
+    <div class="kpis">
+      <div class="kpi"><div class="k">Đoạn trong kho</div><div class="v">${tongDoan}</div></div>
+      <div class="kpi"><div class="k">Tổng chiều dài</div><div class="v" style="font-size:21px">${F(tongMm/1000)}<span style="font-size:13px"> m</span></div></div>
+      <div class="kpi"><div class="k">Giá trị tồn</div><div class="v" style="font-size:21px">${Ftr(tongMm/S.bar*dCay)}</div></div>
+    </div>
+    <div class="tw"><table><thead><tr><th>Chiều dài</th><th class="r">Số đoạn</th><th>Từ đơn</th><th>Dùng được cho chi tiết ${F(need.len)} mm?</th></tr></thead><tbody>
+    ${S.offcuts.map(o=>{const fit=Math.floor((o.len+S.kerf)/(need.len+S.kerf));
+      return `<tr><td class="num"><b>${F(o.len)} mm</b></td><td class="r num">${o.qty}</td>
+      <td style="color:var(--fg-2);font-size:12.5px">${esc(o.tu)}</td>
+      <td>${fit>=1?`<span class="pill ok">Được ${fit} chi tiết mỗi đoạn</span>`:'<span class="pill neu">Ngắn hơn chi tiết</span>'}</td></tr>`;}).join("")}
+    </tbody></table></div>
+    ${(()=>{
+      if (g.tuPhoiDu===0) return `<div class="tip grey"><h3>Không đoạn nào trong kho dùng được cho chi tiết ${F(need.len)} mm</h3>
+        <p>Mọi đoạn đang có đều ngắn hơn chiều dài chi tiết. Thử sang màn Báo giá, bấm áp dụng gợi ý lùi 5 mm rồi quay lại đây — bốn đoạn 1.495 mm của DH-237 sẽ vừa khít.</p></div>`;
+      const gom={}; g.dung.forEach(d=>{ const k=d.len+"|"+d.tu;
+        gom[k]=gom[k]||{len:d.len,tu:d.tu,doan:0,ct:0,thua:d.thua}; gom[k].doan++; gom[k].ct+=d.lay; });
+      const mo=Object.values(gom).map(d=>`${d.doan} đoạn <b>${F(d.len)} mm</b> của ${esc(d.tu)} cho ${d.ct} chi tiết${d.thua>50?`, mỗi đoạn còn thừa ${F(d.thua)} mm`:""}`).join(" · ");
+      const bot = p.soCay - (pMoi?pMoi.soCay:0);
+      return `<div class="tip ${bot>0?"green":"grey"}">
+        <h3>Lấy được ${g.tuPhoiDu} trên ${need.qty} chi tiết từ phôi dư</h3>
+        <p>${mo}. Chỉ còn phải mua thép mới cho <b>${g.conThieu}</b> chi tiết.</p>
+        ${bot>0
+          ? `<p style="margin-top:6px">Số cây phải mua giảm từ <b>${p.soCay}</b> xuống <b>${pMoi?pMoi.soCay:0}</b> — tiết kiệm <b>${F(tietKiem)} đ</b> tiền thép trên riêng đơn này.</p>`
+          : `<p style="margin-top:6px">Số cây phải mua vẫn là <b>${p.soCay}</b>: ${g.tuPhoiDu} chi tiết lấy từ kho chưa đủ để bỏ trọn một cây. Phôi dư chỉ quy ra tiền khi nó cắt bớt được nguyên một cây — nên hệ thống nói thẳng là lần này chưa tiết kiệm được đồng nào, thay vì khoe con số kilôgam nghe cho đẹp.</p>`}
+      </div>`;
+    })()}
+    <p class="note">Thuật toán ghép chạy thật: xếp các đoạn theo chiều dài giảm dần, với mỗi đoạn tính được bao nhiêu chi tiết kể cả mạch cắt, lấy tới khi đủ số lượng. Đổi chiều dài chi tiết ở màn Báo giá thì kết quả ở đây đổi theo.</p>
+    <div class="tip grey" style="margin-top:14px"><h3>Giới hạn phải nói rõ</h3>
+      <p>Đây là kho phôi dư <b>nội bộ một xưởng</b>. Nhóm đã xem xét và loại bỏ ý tưởng mạng lưới trao đổi phôi dư liên xưởng: nghiên cứu cho thấy khâu thanh lý phế liệu không phải nỗi đau của xưởng, các vựa cạnh tranh gay gắt và thu gom nhanh, nên không có khoảng trống dịch vụ để chen vào.</p></div>
+  </div>`;
+}
+
+function viewDinhMuc(){
+  const h = hocDinhMuc(S.lichSu);
+  const max = Math.max(...S.lichSu.flatMap(x=>[x.uoc,x.thuc]), h.moi) * 1.15;
+  return `<div class="card">
+    <h2>Vòng học định mức</h2>
+    <p class="sub">Ước tính → thực tế → chênh lệch → học ngược → báo giá lần sau chính xác hơn. Đây là cơ chế giá trị cộng dồn duy nhất của sản phẩm, và là lý do một xưởng dùng ba năm có tài sản mà một xưởng dùng Excel ba năm không có.</p>
+    <div class="tw"><table><thead><tr><th>Đơn</th><th class="r">Hao hụt ước tính</th><th class="r">Hao hụt thực tế</th><th class="r">Chênh</th><th>So sánh</th></tr></thead><tbody>
+    ${S.lichSu.map(x=>{const d=x.thuc-x.uoc;
+      return `<tr><td><b>${esc(x.don)}</b></td><td class="r num">${F2(x.uoc)}%</td><td class="r num">${F2(x.thuc)}%</td>
+      <td class="r num" style="color:${d>0?"var(--bad)":"var(--ok)"}">${d>0?"+":""}${F2(d)}</td>
+      <td style="min-width:180px"><div style="display:flex;gap:3px;align-items:center">
+        <div class="meter" style="flex:1;margin:0"><i style="width:${x.uoc/max*100}%;background:var(--fg-3)"></i></div>
+        <div class="meter" style="flex:1;margin:0"><i style="width:${x.thuc/max*100}%;background:${d>0?"var(--spark)":"var(--ok)"}"></i></div>
+      </div><div style="font-size:10.5px;color:var(--fg-3);margin-top:2px">xám: ước tính · màu: thực tế</div></td></tr>`;}).join("")}
+    </tbody></table></div>
+    <div class="kpis">
+      <div class="kpi hot"><div class="k">Định mức cho đơn tới</div><div class="v">${F2(h.moi)}%</div>
+        <div class="s">bình quân có trọng số, ưu tiên đơn gần đây</div></div>
+      <div class="kpi"><div class="k">Lệch trung bình</div><div class="v">${h.lechTB>0?"+":""}${F2(h.lechTB)}</div>
+        <div class="s">thực tế so với ước tính</div></div>
+      <div class="kpi ${Math.abs(h.lechCuoi)<0.5?"good":""}"><div class="k">Lệch ở đơn mới nhất</div>
+        <div class="v">${h.lechCuoi>0?"+":""}${F2(h.lechCuoi)}</div><div class="s">càng gần 0 thì càng chính xác</div></div>
+    </div>
+    <div class="tip"><h3>Vì sao con số này đáng tiền</h3>
+      <p>Năm đơn đầu, xưởng ước thấp hơn thực tế trung bình ${F2(Math.abs(h.lechTB))} điểm phần trăm — tức mỗi đơn đều báo giá hụt một chút mà không biết. Sau khi học, định mức dùng cho đơn tới là <b>${F2(h.moi)}%</b> thay vì con số cảm tính. Đây cũng là dữ liệu để đo tác động ở màn sau, vì hệ thống vốn đã phải ghi lại lượng vật tư dự tính và lượng thực dùng.</p></div>
+    <div class="sec-h">Thêm một đơn vừa quyết toán xong</div>
+    <div class="row">
+      <div style="flex:1 1 110px"><label for="dn">Mã đơn</label><input id="dn" value="DH-239"></div>
+      <div style="flex:1 1 100px"><label for="du">Ước tính (%)</label><input class="num" id="du" type="number" step="0.1" value="${F2(h.moi).replace(",",".")}"></div>
+      <div style="flex:1 1 100px"><label for="dt">Thực tế (%)</label><input class="num" id="dt" type="number" step="0.1" value="9.0"></div>
+      <button class="btn spark" id="addDm">Ghi nhận và học lại</button>
+    </div>
+    <p class="note">Công thức học: bình quân có trọng số của hao hụt thực tế, đơn càng gần đây trọng số càng lớn. Đơn giản có chủ ý — chủ xưởng phải hiểu được vì sao con số thay đổi, nếu không họ sẽ không tin nó.</p>
+  </div>`;
+}
+
+function viewDoLuong(){
+  const rows = S.did.map(m=>{
+    const dT=m.tSau-m.tTruoc, dC=m.cSau-m.cTruoc, did=dT-dC;
+    const tot = m.tot==="giảm" ? did<0 : did>0;
+    return {...m, dT, dC, did, tot};
+  });
+  return `<div class="card">
+    <h2>Đo lường tác động</h2>
+    <p class="sub">Cách nhóm sẽ chứng minh sản phẩm có tác dụng, thay vì chỉ tuyên bố.</p>
+    <div class="tip grey"><h3>Chưa có con số thật</h3>
+      <p>Nhóm chưa chạy pilot nên chưa có kết quả, và không đặt một con số đẹp để lấp chỗ trống. Các ô dưới đây là <b>số mẫu để thấy cách tính</b> — sửa được, và phép tính khác biệt kép chạy thật trên số bạn nhập. Thứ nhóm có là một thiết kế đo sẽ cho ra con số đó trong sáu tháng.</p></div>
+    <div class="sec-h">Thiết kế</div>
+    <div class="tw"><table><thead><tr><th>Thành phần</th><th>Cụ thể</th></tr></thead><tbody>
+      <tr><td><b>Nhóm bật tính năng</b></td><td style="color:var(--fg-2);font-size:13px">5 xưởng, bật công cụ tính phôi</td></tr>
+      <tr><td><b>Nhóm đối chứng</b></td><td style="color:var(--fg-2);font-size:13px">5 xưởng, hoãn tính năng cùng thời kỳ, cùng ngành</td></tr>
+      <tr><td><b>Đường cơ sở</b></td><td style="color:var(--fg-2);font-size:13px">Đo cả 10 xưởng trong 2 tuần <b>trước</b> ngày cài đặt — phép đo không làm lại được, nên nó là mốc M2 trong lộ trình</td></tr>
+      <tr><td><b>Cách đọc kết quả</b></td><td style="color:var(--fg-2);font-size:13px">Khác biệt kép: chênh lệch của nhóm bật trừ đi chênh lệch của nhóm đối chứng. Loại bỏ ảnh hưởng mùa vụ và ảnh hưởng của việc xưởng biết mình đang được quan sát</td></tr>
+      <tr><td><b>Chi phí đo</b></td><td style="color:var(--fg-2);font-size:13px">Gần bằng không, vì phép đo nằm ngay trong phần mềm — hệ thống vốn đã ghi lượng vật tư dự tính và thực dùng để chạy vòng học định mức</td></tr>
+    </tbody></table></div>
+    <div class="sec-h">Ba chỉ số cam kết đo</div>
+    <div class="tw"><table><thead><tr>
+      <th>Chỉ số</th><th class="r">Bật · trước</th><th class="r">Bật · sau</th><th class="r">Đối chứng · trước</th>
+      <th class="r">Đối chứng · sau</th><th class="r">Khác biệt kép</th></tr></thead><tbody>
+    ${rows.map((m,i)=>`<tr>
+      <td><b>${esc(m.ten)}</b><br><span style="color:var(--fg-3);font-size:11.5px">${esc(m.dv)}</span></td>
+      ${["tTruoc","tSau","cTruoc","cSau"].map(k=>
+        `<td class="r"><input class="num" style="text-align:right;padding:5px 7px" type="number" step="0.01" data-did="${i}" data-f="${k}" value="${m[k]}"></td>`).join("")}
+      <td class="r num" style="font-weight:700;color:${m.tot?"var(--ok)":"var(--bad)"}">${m.did>0?"+":""}${F2(m.did)}</td></tr>`).join("")}
+    </tbody></table></div>
+    <p class="note">Phép tính: (sau − trước của nhóm bật) − (sau − trước của nhóm đối chứng). Ví dụ dòng đầu: (${F2(rows[0].tSau,0)} − ${F2(rows[0].tTruoc,0)}) − (${F2(rows[0].cSau,0)} − ${F2(rows[0].cTruoc,0)}) = ${F2(rows[0].did)} ngày. Sửa bất kỳ ô nào thì cột cuối tính lại ngay.</p>
+    <div class="sec-h">Cam kết đo và không cam kết</div>
+    <div class="tw"><table><thead><tr><th>Cam kết đo</th><th>Không cam kết</th></tr></thead><tbody>
+      <tr><td>Số kilôgam vật tư tiết kiệm được</td><td style="color:var(--fg-2)">Số tấn CO₂ giảm phát thải</td></tr>
+      <tr><td>Tỷ lệ hao hụt trước và sau, tính pro rata trên <b>toàn bộ</b> vật tư nhập trong kỳ</td><td style="color:var(--fg-2)">Đóng góp vào mục tiêu khí hậu quốc gia</td></tr>
+    </tbody></table></div>
+    <div class="tip"><h3>Vì sao phải tính trên toàn bộ vật tư nhập, không chỉ trên đơn có dùng tính năng</h3>
+      <p>Đo kiểu sau sẽ cho một con số rất đẹp và hoàn toàn vô giá trị, vì nó bỏ qua phần vật tư còn lại. Đây là lỗi mà các bộ tiêu chí quốc tế đã ghi nhận là bị lách thường xuyên, và nhóm viết quy tắc chống nó vào thiết kế đo ngay từ đầu.</p></div>
+  </div>`;
+}
+
+function viewCongNghe(){
+  return `<div class="card">
+    <h2>Công nghệ dùng ở đâu, và giới hạn ở đâu</h2>
+    <p class="sub">Thể lệ hỏi rõ mức độ hoàn thiện, nên đây là câu trả lời không tô vẽ.</p>
+    <div class="tw"><table><thead><tr><th>Thành phần</th><th>Trong bản chạy thử này</th><th>Căn cứ</th></tr></thead><tbody>
+      <tr><td><b>Xếp phôi, tính hao hụt, dò chiều dài tối ưu</b></td><td><span class="pill ok">Chạy thật</span></td>
+        <td style="color:var(--fg-2);font-size:12.5px">Bài toán cắt thanh một chiều, thuật toán First-Fit Decreasing, chạy trong trình duyệt. Có ràng buộc dự phòng 10 mm cho dung sai chiều dài cây</td></tr>
+      <tr><td><b>Ghép phôi dư tồn kho vào đơn mới</b></td><td><span class="pill ok">Chạy thật</span></td>
+        <td style="color:var(--fg-2);font-size:12.5px">Xếp đoạn thừa theo chiều dài giảm dần, tính số chi tiết lấy được kể cả mạch cắt</td></tr>
+      <tr><td><b>Tính giá vốn và cảnh báo biên mỏng</b></td><td><span class="pill ok">Chạy thật</span></td>
+        <td style="color:var(--fg-2);font-size:12.5px">Số nhát cắt lấy từ sơ đồ cắt, không nhập tay — đó là cách chi phí ẩn được tính ra</td></tr>
+      <tr><td><b>Vòng học định mức</b></td><td><span class="pill ok">Chạy thật</span></td>
+        <td style="color:var(--fg-2);font-size:12.5px">Bình quân có trọng số theo thời gian trên chênh lệch ước tính và thực tế</td></tr>
+      <tr><td><b>Khác biệt kép để đo tác động</b></td><td><span class="pill ok">Chạy thật</span></td>
+        <td style="color:var(--fg-2);font-size:12.5px">Công thức chạy trên số nhập vào. Số liệu đang hiển thị là số mẫu, chưa phải kết quả pilot</td></tr>
+      <tr><td><b>Bóc tách yêu cầu từ tin nhắn chữ</b></td><td><span class="pill ok">Chạy thật</span></td>
+        <td style="color:var(--fg-2);font-size:12.5px">Bộ luật bóc tách tiếng Việt chuyên ngành — nhận cách nói của thợ như “1ly2”, “50x50”, “18 cây”</td></tr>
+      <tr><td><b>Lớp người rà soát và nhật ký phê duyệt</b></td><td><span class="pill ok">Chạy thật</span></td>
+        <td style="color:var(--fg-2);font-size:12.5px">Ngưỡng tin cậy 85%; dưới ngưỡng thì chặn, mọi lần sửa đều ghi lại</td></tr>
+      <tr><td><b>Bóc tách ảnh bản vẽ tay</b></td><td><span class="pill warn">Cần máy chủ</span></td>
+        <td style="color:var(--fg-2);font-size:12.5px">Không tồn tại benchmark cho bản vẽ tay ngành cơ khí ở bất kỳ ngôn ngữ nào. AI chỉ được phép tạo bản nháp, người giữ quyền quyết định cuối</td></tr>
+      <tr><td><b>Đọc hoá đơn vật tư chụp bằng điện thoại</b></td><td><span class="pill warn">Cần máy chủ</span></td>
+        <td style="color:var(--fg-2);font-size:12.5px">Ở 95% chính xác mỗi trường, một hoá đơn 5 dòng × 4 trường chỉ đúng toàn bộ 35% ⇒ bắt buộc qua người rà soát</td></tr>
+      <tr><td><b>Nhận dạng giọng nói tự do cho tên vật tư</b></td><td><span class="pill bad">Không làm</span></td>
+        <td style="color:var(--fg-2);font-size:12.5px">41–91% lỗi với từ ngoài từ vựng trên cả 5 nền tảng tiếng Việt, trong khi điểm hoà vốn của việc sửa bản ghi là 30%</td></tr>
+      <tr><td><b>Kết nối Zalo OA và VietQR thật</b></td><td><span class="pill warn">Chưa nối</span></td>
+        <td style="color:var(--fg-2);font-size:12.5px">Hạ tầng đã công khai giá: VietQR 1.600 đ mỗi giao dịch cố định hoặc 0,8% mỗi giao dịch. Nối ở mốc M3</td></tr>
+    </tbody></table></div>
+    <div class="tip"><h3>Vì sao lõi không phải là OCR</h3>
+      <p>Bảy dòng đầu chạy được ngay trong trình duyệt vì chúng là bài toán xác định, có lời giải kinh điển. Ba dòng cuối là bài toán xác suất và nhóm không đặt chúng làm lõi. OCR là một đường vào, và nó luôn đi qua lớp người duyệt. Nếu bỏ hết AI đi thì công cụ tính phôi và vòng học định mức vẫn còn nguyên giá trị — đó là phép thử nhóm tự đặt ra cho chính mình.</p></div>
+    <div class="sec-h">Kiến trúc năm lớp</div>
+    <div class="tw"><table><thead><tr><th>Lớp</th><th>Việc</th></tr></thead><tbody>
+      <tr><td><b>Khách hàng → Zalo Bot</b></td><td style="color:var(--fg-2);font-size:13px">Nhận tin nhắn, ảnh bản vẽ, tin thoại</td></tr>
+      <tr><td><b>Cổng sự kiện tin nhắn</b></td><td style="color:var(--fg-2);font-size:13px">Xác thực chữ ký · chống trùng lặp · hàng đợi · thử lại</td></tr>
+      <tr><td style="color:var(--spark)"><b>★ Lớp con người rà soát</b></td><td style="color:var(--fg-2);font-size:13px">Hàng đợi ngoại lệ · ngưỡng tin cậy · người duyệt · ghi lý do sửa</td></tr>
+      <tr><td><b>Lõi nghiệp vụ</b></td><td style="color:var(--fg-2);font-size:13px">Báo giá · vật tư · công đoạn · công nợ → Zalo OA gửi ra</td></tr>
+      <tr><td><b>Ứng dụng web riêng cho thợ</b></td><td style="color:var(--fg-2);font-size:13px">Không phải Zalo — Mini App không có quyền micro, cửa sổ tương tác OA đóng sau 7 ngày, tệp xoá sau 7 ngày</td></tr>
+    </tbody></table></div>
+    <div class="sec-h">Tuân thủ đưa vào sản phẩm từ bản đầu</div>
+    <ul class="tick">
+      <li>Tách 5 loại đồng ý: chủ xưởng, thợ, khách hàng, nhà cung cấp, người xuất hiện trong ảnh. Đồng ý của chủ xưởng không thay được đồng ý của thợ.</li>
+      <li>Quyền từ chối xử lý tự động ở cấp từng cá nhân, và việc từ chối không được dùng làm căn cứ kỷ luật.</li>
+      <li>Nhật ký mọi lần con người phê duyệt — chế độ hậu kiểm đòi bằng chứng, không đòi ý định.</li>
+      <li>Lớp khử nhận dạng tại máy chủ trong nước trước khi gọi API AI nước ngoài, cộng hồ sơ chuyển dữ liệu nộp trong 60 ngày kể từ lần chuyển đầu tiên.</li>
+      <li>VietQR trỏ thẳng tài khoản xưởng — IronSpace không chạm vào dòng tiền.</li>
+    </ul>
+  </div>`;
+}
+
+/* ---------- màn Báo giá: 6 bước ---------- */
+function viewBaoGia(){
+  const p = plan(S.parts, S.bar, S.kerf);
+  const rail = `<div class="rail" style="margin:0 0 14px">${STEPS.map((s,i)=>
+    `<button class="tab" data-s="${i}" aria-current="${i===S.step}"><i>${i+1}</i>${esc(s)}</button>`).join("")}</div>`;
+
+  if (S.step===0) return rail + `<div class="card">
+    <h2>Khách nhắn vào Zalo của xưởng</h2>
+    <p class="sub">Khách không cài gì. Họ nhắn đúng cách họ vẫn nhắn, kèm ảnh bản vẽ tay trên giấy kẻ ô.</p>
+    <div class="phone" style="margin-top:14px">
+      <div class="zhead"><span class="dot">A</span> Anh Tuấn · Zalo · hôm nay</div>
+      <div class="msg">${esc(S.msg)}</div>
+      <figure class="draw">
+        <svg viewBox="0 0 260 112" width="100%" height="92" role="img" aria-label="Bản vẽ tay cổng hai cánh trên giấy kẻ ô">
+          <g stroke="var(--fg-3)" stroke-width=".4" opacity=".45">
+            ${Array.from({length:13},(_,i)=>`<line x1="${i*20}" y1="0" x2="${i*20}" y2="112"/>`).join("")}
+            ${Array.from({length:6},(_,i)=>`<line x1="0" y1="${i*20}" x2="260" y2="${i*20}"/>`).join("")}</g>
+          <g stroke="var(--fg)" stroke-width="2" fill="none" stroke-linecap="round">
+            <rect x="34" y="22" width="86" height="70"/><rect x="128" y="22" width="86" height="70"/>
+            <line x1="48" y1="32" x2="48" y2="82"/><line x1="62" y1="32" x2="62" y2="82"/>
+            <line x1="76" y1="32" x2="76" y2="82"/><line x1="142" y1="32" x2="142" y2="82"/>
+            <line x1="156" y1="32" x2="156" y2="82"/><line x1="170" y1="32" x2="170" y2="82"/></g>
+          <g stroke="var(--spark)" stroke-width="1.1" fill="none">
+            <line x1="34" y1="104" x2="214" y2="104"/><line x1="34" y1="100" x2="34" y2="108"/>
+            <line x1="214" y1="100" x2="214" y2="108"/><line x1="226" y1="22" x2="226" y2="92"/>
+            <line x1="222" y1="22" x2="230" y2="22"/><line x1="222" y1="92" x2="230" y2="92"/></g>
+          <text x="124" y="99" font-size="9" fill="var(--spark)" font-family="monospace" text-anchor="middle">3200</text>
+          <text x="238" y="60" font-size="9" fill="var(--spark)" font-family="monospace">2000</text>
+        </svg>
+        <figcaption>cong-anh-tuan.jpg · 1,2 MB</figcaption>
+      </figure>
+    </div>
+    <div class="hr"></div>
+    <label for="msg">Sửa tin nhắn rồi bấm bóc tách — bộ bóc tách chữ chạy thật, không có kịch bản dựng sẵn</label>
+    <textarea id="msg" rows="3">${esc(S.msg)}</textarea>
+    <div class="row" style="margin-top:12px">
+      <button class="btn spark" id="go">Bóc tách yêu cầu</button>
+      <button class="btn alt" id="ex1">Thử câu khác</button></div>
+  </div>`;
+
+  if (S.step===1){
+    if (!S.parsed) S.parsed = parseSpec(S.msg);
+    const keys=Object.keys(FIELD_VN), duoi=keys.filter(k=>S.parsed[k].c<NGUONG);
+    return rail + `<div class="card">
+      <h2>AI dựng bản nháp — và tự khai chỗ nó không chắc</h2>
+      <p class="sub">Độ tin cậy ở đây là mức khớp của luật bóc tách, không phải xác suất của một mô hình. Trường nào dưới ${Math.round(NGUONG*100)}% thì không được đi tiếp.</p>
+      <div class="tw"><table><thead><tr><th>Trường</th><th>AI đọc được</th><th class="r">Tin cậy</th><th>Căn cứ</th></tr></thead><tbody>
+      ${keys.map(k=>{const f=S.parsed[k], ok=f.c>=NGUONG;
+        return `<tr><td><b>${FIELD_VN[k]}</b></td>
+        <td class="num">${f.v!==null?esc(f.v):"<span style='color:var(--bad)'>— trống —</span>"}</td>
+        <td class="r"><span class="pill ${ok?"ok":"warn"}">${Math.round(f.c*100)}%</span></td>
+        <td style="color:var(--fg-2);font-size:12.5px">${esc(f.how)}</td></tr>`;}).join("")}
+      </tbody></table></div>
+      <div class="kpis">
+        <div class="kpi good"><div class="k">Trường đạt ngưỡng</div><div class="v">${keys.length-duoi.length}/${keys.length}</div></div>
+        <div class="kpi ${duoi.length?"hot":""}"><div class="k">Vào hàng đợi ngoại lệ</div><div class="v">${duoi.length}</div></div>
+      </div>
+      <p class="note">Ảnh bản vẽ tay <b>không</b> được bóc tách trong bản chạy thử này. Việc đó cần một mô hình thị giác chạy trên máy chủ, và theo khảo sát của nhóm thì không tồn tại benchmark nào cho bản vẽ tay ngành cơ khí ở bất kỳ ngôn ngữ nào.</p>
+      <div class="row" style="margin-top:14px"><button class="btn spark" id="n2">Chuyển cho chủ xưởng duyệt</button></div>
+    </div>`;
+  }
+
+  if (S.step===2){
+    const keys=Object.keys(FIELD_VN), duoi=keys.filter(k=>S.parsed[k].c<NGUONG);
+    return rail + `<div class="card">
+      <h2>Lớp con người rà soát</h2>
+      <p class="sub">AI đề xuất, con người quyết định. Mỗi lần sửa đều ghi lại — vừa là bằng chứng tuân thủ Luật AI 134/2025, vừa là dữ liệu để lần sau đọc đúng hơn.</p>
+      ${duoi.length?`<div class="tip"><h3>${duoi.length} trường cần chủ xưởng xác nhận</h3>
+        <p>${duoi.map(k=>FIELD_VN[k]).join(" · ")} — AI không đủ căn cứ. Hệ thống dừng ở đây thay vì đoán.</p></div>`:""}
+      <div class="sec-h">Chốt thông số để tính phôi</div>
+      <div class="row">
+        <div style="flex:2 1 180px"><label for="lb">Tên chi tiết</label><input id="lb" value="${esc(S.parts[0].label)}"></div>
+        <div style="flex:1 1 110px"><label for="ln">Chiều dài (mm)</label><input class="num" id="ln" type="number" min="1" value="${S.parts[0].len}"></div>
+        <div style="flex:1 1 90px"><label for="qt">Số lượng</label><input class="num" id="qt" type="number" min="1" value="${S.parts[0].qty}"></div>
+      </div>
+      <div class="row" style="margin-top:12px">
+        <div style="flex:1 1 130px"><label for="bl">Cây nguyên (mm)</label><input class="num" id="bl" type="number" value="${S.bar}"></div>
+        <div style="flex:1 1 130px"><label for="kf">Mạch cắt (mm)</label><input class="num" id="kf" type="number" step="0.1" value="${S.kerf}"></div>
+      </div>
+      <div class="row" style="margin-top:14px"><button class="btn spark" id="ap">Chủ xưởng duyệt và tính phôi</button></div>
+      <p class="note">Mạch cắt mặc định 2,5 mm là của máy cắt đĩa. Đá cầm tay cho khoảng 1,2–1,4 mm, máy cắt bàn 14 inch khoảng 3,0 mm. Xưởng đo lưỡi của mình rồi nhập lại.</p>
+    </div>`;
+  }
+
+  if (S.step===3){
+    if (!p) return rail + `<div class="card"><h2>Chi tiết dài hơn cây nguyên</h2><p class="sub">Quay lại bước 3 và nhập lại.</p></div>`;
+    const lui=timLui(S.parts,S.bar,S.kerf), dCay=S.kg*S.dkg;
+    return rail + `<div class="card">
+      <h2>Tối ưu cắt phôi</h2>
+      <p class="sub">Bài toán cắt thanh một chiều, giải bằng First-Fit Decreasing. Đây là phần chạy thật — đổi bất kỳ con số nào ở bước 3 thì kết quả đổi theo.</p>
+      ${barHTML(p)}
+      <div class="kpis">
+        <div class="kpi"><div class="k">Số cây phải mua</div><div class="v">${F(p.soCay)}</div></div>
+        <div class="kpi ${p.haoPct>=10?"hot":"good"}"><div class="k">Hao hụt</div><div class="v">${FP(p.haoPct)}%</div></div>
+        <div class="kpi"><div class="k">Đầu mẩu bỏ đi</div><div class="v">${F(p.dauMauMm)}<span style="font-size:13px"> mm</span></div></div>
+        <div class="kpi"><div class="k">Mạch cắt ăn mất</div><div class="v">${F(p.kerfMm)}<span style="font-size:13px"> mm</span></div></div>
+      </div>
+      ${lui?`<div class="tip">
+        <h3>Lùi ${F(lui.lui)} mm thì bớt được ${F(p.soCay-lui.r.soCay)} cây thép</h3>
+        <p>Giữ nguyên ${F(S.parts[lui.idx].len)} mm thì mỗi cây chỉ cắt được ${p.bars[0].items.length} chi tiết và hao hụt ${FP(p.haoPct)}%.
+        Đổi sang <b>${F(lui.lenMoi)} mm</b> thì cắt được ${lui.r.bars[0].items.length} chi tiết, hao hụt còn <b>${FP(lui.r.haoPct)}%</b> —
+        giảm <b>${(p.haoPct/Math.max(lui.r.haoPct,1e-9)).toFixed(0)} lần</b>, tiết kiệm <b>${F((p.soCay-lui.r.soCay)*dCay)} đ</b> tiền thép trên riêng đơn này.</p>
+        <p style="margin-top:8px;font-size:12.5px;color:var(--fg-2)">Phương án này còn dư <b class="num">${F2(lui.r.duPhongMin,1)} mm</b> trên cây đầy nhất, nên vẫn cắt đủ kể cả khi cây thép giao về ngắn hơn danh nghĩa ${F(lui.duPhong)} mm. Công cụ bỏ qua những phương án lùi ít hơn nhưng dư dưới ${F(lui.duPhong)} mm — về số học thì đẹp hơn, ra xưởng thì hụt một nhát là mất luôn chi tiết cuối.</p>
+        <button class="btn spark" id="apply">Áp dụng ${F(lui.lenMoi)} mm</button></div>`
+      :`<div class="tip green"><h3>Không còn cây nào cắt bớt được</h3>
+        <p>Đã thử lùi từng milimét tới 30 mm cho mỗi loại chiều dài, với yêu cầu còn dư ít nhất ${F(DU_PHONG)} mm phòng dung sai cây. Không phương án nào giảm được số cây.</p></div>`}
+      <p class="note">Công cụ dò từng milimét từ 1 đến 30 cho mỗi loại chi tiết, xếp lại toàn bộ để so, rồi chọn phương án <b>lùi ít nhất</b> mà vẫn bớt được cây và vẫn còn dự phòng dung sai. Con số không gán sẵn.</p>
+      <div class="row" style="margin-top:14px">
+        <button class="btn spark" id="n4">Tính giá thành</button>
+        <button class="btn alt" id="b2">Sửa thông số</button>
+        <button class="btn alt" id="gpd">Xem kho phôi dư có đoạn nào dùng được</button></div>
+    </div>`;
+  }
+
+  if (S.step===4){
+    const g=tinhGia(); if (!g) return rail;
+    const mong=g.bienPct<15;
+    return rail + `<div class="card">
+      <h2>Giá thành và cảnh báo biên mỏng</h2>
+      <p class="sub">Chi phí ẩn được tính ra từ chính sơ đồ cắt ở bước trước, không nhập tay: số nhát cắt quyết định tiền đá cắt.</p>
+      <div class="tw"><table><thead><tr><th>Khoản</th><th>Cách tính</th><th class="r">Thành tiền</th></tr></thead><tbody>
+        <tr><td><b>Vật tư</b></td><td style="color:var(--fg-2)">${F(g.p.soCay)} cây × ${F2(S.kg,2)} kg × ${F(S.dkg)} đ/kg</td><td class="r num">${F(g.vatTu)} đ</td></tr>
+        <tr><td><b>Nhân công</b></td><td style="color:var(--fg-2)">${F2(S.gioCong,1)} giờ × ${F(S.dGio)} đ/giờ</td><td class="r num">${F(g.nhanCong)} đ</td></tr>
+        <tr><td>Đá cắt</td><td style="color:var(--fg-2)">${F(g.p.soNhat)} nhát ÷ ${S.nhatMoiDa} nhát/viên × ${F(S.rDa)} đ</td><td class="r num">${F(g.da)} đ</td></tr>
+        <tr><td>Que hàn</td><td style="color:var(--fg-2)">${F(S.moiHan)} mối × ${F(S.rQue)} đ</td><td class="r num">${F(g.que)} đ</td></tr>
+        <tr><td>Khí Argon</td><td style="color:var(--fg-2)">${F(S.moiHan)} mối × ${F(S.rKhi)} đ</td><td class="r num">${F(g.khi)} đ</td></tr>
+        <tr><td>Điện máy</td><td style="color:var(--fg-2)">${F2(S.gioMay,1)} giờ × ${F(S.rDien)} đ</td><td class="r num">${F(g.dien)} đ</td></tr>
+        <tr style="border-top:2px solid var(--fg)"><td><b>Giá vốn</b></td><td></td><td class="r num"><b>${F(g.tong)} đ</b></td></tr>
+      </tbody></table></div>
+      <div class="row" style="margin-top:16px">
+        <div style="flex:1 1 160px"><label for="gb">Giá báo cho khách (đ)</label><input class="num" id="gb" type="number" step="100000" value="${S.giaBan}"></div>
+        <div style="flex:1 1 110px"><label for="gc">Giờ công</label><input class="num" id="gc" type="number" step="0.5" value="${S.gioCong}"></div>
+        <div style="flex:1 1 110px"><label for="mh">Số mối hàn</label><input class="num" id="mh" type="number" value="${S.moiHan}"></div>
+        <div style="flex:1 1 130px"><label for="dk">Đơn giá thép (đ/kg)</label><input class="num" id="dk" type="number" step="1000" value="${S.dkg}"></div>
+      </div>
+      <div class="kpis">
+        <div class="kpi ${mong?"hot":"good"}"><div class="k">Biên lợi nhuận</div><div class="v">${F2(g.bienPct,1)}%</div>
+          <div class="meter"><i style="width:${clamp(g.bienPct,0,100)}%;background:${mong?"var(--spark)":"var(--ok)"}"></i></div></div>
+        <div class="kpi"><div class="k">Lãi trên đơn</div><div class="v" style="font-size:21px">${F(g.bien)} đ</div></div>
+        <div class="kpi"><div class="k">Chi phí ẩn</div><div class="v" style="font-size:21px">${F(g.an)} đ</div></div>
+      </div>
+      ${mong?`<div class="tip"><h3>Biên mỏng — cân nhắc trước khi gửi</h3>
+        <p>Biên ${F2(g.bienPct,1)}% nằm dưới ngưỡng 15% xưởng tự đặt. Giá thép đã điều chỉnh 5 đợt từ đầu 2026, mỗi đợt 300.000 đến 600.000 đồng một tấn, nên một báo giá đưa ra tuần trước có thể đã âm biên vào tuần này. Báo giá kèm hạn hiệu lực 7 ngày.</p></div>`
+      :`<div class="tip green"><h3>Biên đạt ngưỡng</h3><p>Biên ${F2(g.bienPct,1)}% trên ngưỡng 15%. Gửi được.</p></div>`}
+      <div class="row" style="margin-top:14px"><button class="btn spark" id="xq">Xuất báo giá</button></div>
+    </div>`;
+  }
+
+  if (S.step===5){
+    const g=tinhGia();
+    return rail + `<div class="card">
+      <h2>Báo giá gửi lại Zalo</h2>
+      <p class="sub">Khách bấm xác nhận ngay trong Zalo, không cài gì. Mã VietQR trỏ thẳng tài khoản xưởng.</p>
+      <div class="phone" style="margin-top:14px">
+        <div class="zhead"><span class="dot">X</span> Xưởng cơ khí · gửi cho anh Tuấn</div>
+        <div class="msg me"><b>BÁO GIÁ — ${esc(S.parts[0].label)}</b><br>
+          <span class="num" style="font-size:13px">
+          Vật tư: ${F(g.p.soCay)} cây × ${F2(S.kg,2)} kg<br>
+          Định mức: ${S.parts[0].qty} chi tiết × ${F(S.parts[0].len)} mm<br>
+          Hao hụt tính trước: ${FP(g.p.haoPct)}%<br>
+          <b style="font-size:16px">Tổng: ${F(S.giaBan)} đ</b><br>
+          Hạn hiệu lực: 7 ngày</span></div>
+      </div>
+      <div class="sec-h">Vì sao báo giá này khác báo giá nhắn tay</div>
+      <ul class="tick">
+        <li>Có định mức vật tư, nên tháng sau đối chiếu được thực tế với dự kiến — đó là đầu vào của vòng học định mức.</li>
+        <li>Có hạn hiệu lực, nên giá thép tăng không thành lỗ của xưởng.</li>
+        <li>Có hao hụt tính trước khi cắt, không phải phát hiện sau khi quyết toán.</li>
+        <li>Khi giao xong, nghiệm thu một chạm sinh đúng ba chứng từ cần để đòi tiền.</li>
+      </ul>
+      <div class="row" style="margin-top:14px">
+        <button class="btn spark" id="toCn">Xem sổ công nợ</button>
+        <button class="btn alt" id="r0">Chạy lại từ đầu</button></div>
+    </div>`;
+  }
+  return rail;
+}
+
+/* ========================= RENDER & SỰ KIỆN ========================= */
+function render(){
+  drawRail();
+  const m=document.getElementById("main");
+  const V={ tongquan:viewTongQuan, baogia:viewBaoGia, xuong:viewXuong, congno:viewCongNo,
+            phoidu:viewPhoiDu, dinhmuc:viewDinhMuc, "dolường":viewDoLuong, congnghe:viewCongNghe };
+  m.innerHTML = (V[S.tab]||viewTongQuan)();
+  drawAside();
+  bind();
+}
+const on=(id,fn)=>{ const e=document.getElementById(id); if(e) e.onclick=fn; };
+const go=(t,s)=>{ S.tab=t; if(s!==undefined) S.step=s; render(); window.scrollTo({top:0,behavior:"smooth"}); };
+
+function bind(){
+  document.querySelectorAll("[data-s]").forEach(b=> b.onclick=()=>{ S.step=+b.dataset.s; render(); });
+
+  /* --- bước 0 --- */
+  on("go",()=>{ S.msg=document.getElementById("msg").value; S.parsed=parseSpec(S.msg);
+    const cd=S.parsed.chieuDai.v, sl=S.parsed.soLuong.v;
+    S.parts=[{ label:S.parsed.hangMuc.v?S.parsed.hangMuc.v+" — thanh khung":"Chi tiết", len:cd||1500, qty:sl||12 }];
+    note("AI dựng bản nháp từ tin nhắn Zalo"); S.step=1; render(); });
+  on("ex1",()=>{ document.getElementById("msg").value =
+    "Cho anh hỏi lan can ban công sắt hộp 40x80 dày 1.4 ly, 18 cây dài 1200mm thì bao nhiêu tiền?"; });
+  on("n2",()=>{ S.step=2; render(); });
+
+  /* --- bước 2 duyệt --- */
+  on("ap",()=>{
+    const lb=document.getElementById("lb").value.trim()||"Chi tiết";
+    const ln=Math.max(1,+document.getElementById("ln").value||1500);
+    const qt=Math.max(1,+document.getElementById("qt").value||1);
+    const cu=S.parts[0];
+    if (cu.len!==ln) note(`Chủ xưởng sửa chiều dài ${F(cu.len)} → ${F(ln)} mm`);
+    if (cu.qty!==qt) note(`Chủ xưởng sửa số lượng ${cu.qty} → ${qt}`);
+    S.parts=[{label:lb,len:ln,qty:qt}];
+    S.bar=Math.max(100,+document.getElementById("bl").value||6000);
+    S.kerf=Math.max(0,+document.getElementById("kf").value||2.5);
+    note("Chủ xưởng duyệt bản nháp"); S.step=3; render(); });
+
+  /* --- bước 3 cắt phôi --- */
+  on("apply",()=>{ const p=plan(S.parts,S.bar,S.kerf), l=timLui(S.parts,S.bar,S.kerf); if(!l)return;
+    note(`Áp dụng gợi ý: ${F(S.parts[l.idx].len)} → ${F(l.lenMoi)} mm, bớt ${F(p.soCay-l.r.soCay)} cây`);
+    S.parts[l.idx].len=l.lenMoi; render(); });
+  on("n4",()=>{ S.step=4; render(); });
+  on("b2",()=>{ S.step=2; render(); });
+  on("gpd",()=>go("phoidu"));
+
+  /* --- bước 4 giá thành --- */
+  const bindNum=(id,k,min=0)=>{ const e=document.getElementById(id); if(!e)return;
+    e.oninput=()=>{ S[k]=Math.max(min,+e.value||0); render();
+      const n=document.getElementById(id); if(n){ n.focus(); n.setSelectionRange(n.value.length,n.value.length);} }; };
+  bindNum("gb","giaBan"); bindNum("gc","gioCong"); bindNum("mh","moiHan"); bindNum("dk","dkg");
+  on("xq",()=>{ note("Xuất báo giá có định mức và hạn hiệu lực"); S.step=5; render(); });
+  on("toCn",()=>go("congno"));
+  on("r0",()=>{ S.step=0; S.log=[]; render(); });
+
+  /* --- xưởng: đẩy công đoạn, phân quyền --- */
+  document.querySelectorAll("[data-adv]").forEach(b=> b.onclick=()=>{
+    const o=S.orders.find(x=>x.id===b.dataset.adv); if(!o)return;
+    note(`${o.id}: thợ báo xong công đoạn ${CONG_DOAN[o.cd]} (kèm ảnh)`);
+    o.cd=Math.min(CONG_DOAN.length-1,o.cd+1);
+    if (o.cd>=5 && o.han===null){ o.giao=0; o.han=0; note(`${o.id}: nghiệm thu, sinh ba chứng từ`); }
+    render(); });
+  const sw=document.getElementById("swq");
+  if (sw) sw.onchange=()=>{ S.anGiaVon=sw.checked;
+    note(`Phân quyền: ${sw.checked?"ẩn":"hiện"} giá vốn với thợ`); render(); };
+
+  /* --- công nợ: nghiệm thu --- */
+  document.querySelectorAll("[data-nt]").forEach(b=> b.onclick=()=>{
+    const o=S.orders.find(x=>x.id===b.dataset.nt); if(!o)return;
+    o.cd=5; o.giao=0; o.han=0;
+    note(`${o.id}: nghiệm thu một chạm — sinh biên bản nghiệm thu, xác nhận khối lượng, biên bản đối chiếu công nợ`);
+    render(); });
+
+  /* --- định mức: thêm đơn --- */
+  on("addDm",()=>{
+    const don=(document.getElementById("dn").value||"DH-mới").trim();
+    const uoc=+document.getElementById("du").value||0, thuc=+document.getElementById("dt").value||0;
+    if (uoc<=0||thuc<=0) return;
+    S.lichSu.push({don,uoc,thuc});
+    note(`Vòng học định mức: ghi nhận ${don}, ước ${F2(uoc)}% thực ${F2(thuc)}%`);
+    render(); });
+
+  /* --- đo lường: sửa ô --- */
+  document.querySelectorAll("[data-did]").forEach(e=> e.oninput=()=>{
+    S.did[+e.dataset.did][e.dataset.f]=+e.value||0; render();
+    const sel=`[data-did="${e.dataset.did}"][data-f="${e.dataset.f}"]`;
+    const n=document.querySelector(sel); if(n){ n.focus(); n.setSelectionRange(n.value.length,n.value.length);} });
+}
+render();
+</script>
+
+</body></html>
